@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Análise Exploratória dos Dados
 
 ```{r}
-setwd("~/Documentos/00_IME_BE/KaggleStat/HousePrices/Data");
+setwd("~/Documentos/00_IME_BE/KaggleStat/HousePrices/Exploratory");
 training_data <- read.csv(file="train.csv");
 
 summary(training_data);
