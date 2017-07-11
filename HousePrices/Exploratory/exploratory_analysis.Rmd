@@ -8,16 +8,28 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-s
+
 ## Análise Exploratória dos Dados
 
-```{r}
-setwd("~/Documentos/00_IME_BE/KaggleStat/HousePrices/Exploratory");
+```{r, f1, eval=TRUE, echo=FALSE}
+# Importando dados
+setwd("~/Documentos/00_IME_BE/KaggleStat/HousePrices/Data");
 training_data <- read.csv(file="train.csv");
-
-print('ola');
-
-summary(training_data);
-
 ```
 
+```{r, f2, eval=TRUE, echo=FALSE}
+setwd("~/Documentos/00_IME_BE/KaggleStat/HousePrices/Exploratory");
+
+# summary(training_data);
+```
+
+
+\newpage
+
+# APÊNDICES
+
+```{r, f1, eval=FALSE, echo=TRUE}
+```
+
+```{r, f2, eval=FALSE, echo=TRUE}
+```
