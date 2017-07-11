@@ -11,16 +11,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Análise Exploratória dos Dados
 
-```{r, f1, eval=TRUE, echo=FALSE}
-# Importando dados
-setwd("~/Documentos/00_IME_BE/KaggleStat/HousePrices/Data");
-training_data <- read.csv(file="train.csv");
+```{r, name=f1, eval=TRUE, echo=FALSE}
+# Definindo o diretório de trabalho
+setwd("/home/be/raulossada/Documentos/00_IME_BE/KaggleStat/HousePrices");
+setwd("Exploratory/");
+getwd();
 ```
 
 ```{r, f2, eval=TRUE, echo=FALSE}
-setwd("~/Documentos/00_IME_BE/KaggleStat/HousePrices/Exploratory");
-
-# summary(training_data);
+# Importando dados
+training_data <- read.csv(file="../Data/train.csv");
 ```
 
 
