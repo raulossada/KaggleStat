@@ -11,11 +11,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Análise Exploratória dos Dados
 
-```{r, name=f1, eval=TRUE, echo=FALSE}
+```{r, f1, eval=TRUE, echo=FALSE}
 # Definindo o diretório de trabalho
 setwd("/home/be/raulossada/Documentos/00_IME_BE/KaggleStat/HousePrices");
 setwd("Exploratory/");
-getwd();
 ```
 
 ```{r, f2, eval=TRUE, echo=FALSE}
