@@ -12,15 +12,16 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Análise Exploratória dos Dados
 
 ```{r, name=f1, eval=TRUE, echo=FALSE}
-# Definindo o diretório de trabalho
-setwd("/home/be/raulossada/Documentos/00_IME_BE/KaggleStat/HousePrices");
+# Antes de começar dê um setwd na pasta HousePrices (onde quer que ela esteja no seu pc)
+
 setwd("Exploratory/");
-getwd();
 ```
 
 ```{r, f2, eval=TRUE, echo=FALSE}
 # Importando dados
-training_data <- read.csv(file="../Data/train.csv");
+training_data <- read.csv(file="../Data/train.csv")[,2:81];
+
+
 ```
 
 
