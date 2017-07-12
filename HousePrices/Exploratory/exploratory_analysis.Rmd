@@ -1,30 +1,51 @@
 ---
-title: "Exploratory Analysis"
-author: "Raul Ossada and Lucas Hamaguchi"
-date: "11 de julho de 2017"
+title: "Análise Exploratória"
+author: "Ossada R. e Hamaguchi L."
+date: "`r format(Sys.time(), '%d de %B de %Y')`"
+lang: "pt-br"
+classoption: a4paper
 output: pdf_document
+fig_caption: yes
 ---
+
+\pagenumbering{gobble}
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Análise Exploratória dos Dados
-
+# 1 ANÁLISE EXPLORATÓRIA DOS DADOS
 
 ```{r, f1, eval=TRUE, echo=FALSE}
-# Antes de começar dê um setwd na pasta HousePrices (onde quer que ela esteja no seu pc)
+# Antes de começar dê um setwd na pasta HousePrices 
+# (onde quer que ela esteja no seu pc)
 
-setwd("Exploratory/");
+# setwd("Exploratory/");
 ```
 
 ```{r, f2, eval=TRUE, echo=FALSE}
 # Importando dados
-training_data <- read.csv(file="../Data/train.csv")[,2:81];
+training_data <- read.csv(file="../Data/train.csv", as.is=FALSE);
+remover_colunas <- c("Id");
+training_data <- training_data[ , !(names(training_data) %in% remover_colunas ) ];
 
-
+# Transformando as variáveis qualitativas em fatores
+training_data$MSSubClass <- as.factor(training_data$MSSubClass);
 ```
 
+```{r, f3, eval=TRUE, echo=FALSE, warning=FALSE}
+library("ggplot2");
+
+qualitativas <- c(1, 2, 5, 6);
+
+for(ii in qualitativas){
+  gg <- ggplot(data=training_data, mapping=aes_string(colnames(training_data)[ii]) ) + 
+    geom_bar() + 
+    scale_y_continuous(name="Frequência Absoluta") + 
+    theme_classic();
+  print(gg);
+}
+```
 
 \newpage
 
@@ -34,4 +55,7 @@ training_data <- read.csv(file="../Data/train.csv")[,2:81];
 ```
 
 ```{r, f2, eval=FALSE, echo=TRUE}
+```
+
+```{r, f3, eval=FALSE, echo=TRUE}
 ```
