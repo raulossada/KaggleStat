@@ -29,18 +29,38 @@ training_data <- read.csv(file="../Data/train.csv", as.is=FALSE);
 remover_colunas <- c("Id");
 training_data <- training_data[ , !(names(training_data) %in% remover_colunas ) ];
 
-# Transformando as variáveis qualitativas em fatores
+# Transformando as variáveis qualitativas que aparecem como um código numérico em fatores
 training_data$MSSubClass <- as.factor(training_data$MSSubClass);
+
+# Tipos das variáves
+vars_tipo <- sapply(X=training_data, FUN=class);
 ```
+
+## 1.1 GRÁFICOS DAS VARIÁVEIS QUALITATIVAS
 
 ```{r, f3, eval=TRUE, echo=FALSE, warning=FALSE}
 library("ggplot2");
 
-qualitativas <- c(1, 2, 5, 6);
+qualitativas <- which(vars_tipo=="factor");
 
 for(ii in qualitativas){
-  gg <- ggplot(data=training_data, mapping=aes_string(colnames(training_data)[ii]) ) + 
+  gg <- ggplot(data=training_data, mapping=aes_string(x=colnames(training_data)[ii]) ) + 
     geom_bar() + 
+    scale_y_continuous(name="Frequência Absoluta") + 
+    theme_classic();
+  print(gg);
+}
+```
+
+## 1.2 GRÁFICOS DAS VARIÁVEIS QUANTITATIVAS
+
+```{r, f4, eval=TRUE, echo=FALSE, warning=FALSE}
+quantitativas <- which(vars_tipo=="integer");
+
+for(ii in quantitativas){
+  gg <- ggplot(data=training_data, 
+               mapping=aes_string(x=colnames(training_data)[ii]) ) + 
+    geom_histogram() + 
     scale_y_continuous(name="Frequência Absoluta") + 
     theme_classic();
   print(gg);
@@ -58,4 +78,7 @@ for(ii in qualitativas){
 ```
 
 ```{r, f3, eval=FALSE, echo=TRUE}
+```
+
+```{r, f4, eval=FALSE, echo=TRUE}
 ```
