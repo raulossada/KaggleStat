@@ -1,0 +1,76 @@
+---
+title: "Web Scraping 1"
+author: "RO e VJT"
+date: "15 de julho de 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Falta
+
+Inserir a data dos dados
+
+Automatizar a coleta de dados de datas anteriores
+
+```{r, p1, echo=FALSE, eval=TRUE}
+library("XML");
+
+# Endereço da página com os dados
+url <- "http://www2.bmf.com.br/pages/portal/bmfbovespa/lumis/lum-ajustes-do-pregao-ptBR.asp";
+
+# XML da página com os dados
+thepage <- readLines(url, warn=FALSE);
+```
+
+```{r, p2, echo=FALSE, eval=TRUE}
+# Pega os nomes das colunas da tabela
+webTitulos <- grep(pattern="<th ", x=thepage, value=TRUE);
+Titulos <- sub(pattern=".*\">", replacement="", x=webTitulos);
+Titulos <- sub(pattern="</th>$", replacement="", x=Titulos);
+```
+
+```{r, p3, echo=FALSE, eval=TRUE}
+# Pega o XML do site correspondente à tabela com os dados
+webTabela <- grep(pattern="<td", x=thepage, value=TRUE);
+
+# Cria uma tabela com os dados
+possiveisMercadorias <- seq(from=1, to=length(webTabela), by=6);
+TabelaDados <- NULL;
+for(ii in possiveisMercadorias){
+  candidataMercadoria <- sub(pattern=".*<td>", replacement="", x=webTabela[ii]);
+  candidataMercadoria <- sub(pattern=" *</td>$", replacement="", x=candidataMercadoria);
+  
+  if(candidataMercadoria!=""){
+    Mercadoria <- candidataMercadoria;
+  }
+  webLinhaDados <- webTabela[(ii+1):(ii+5)];
+  LinhaDados <- sub(pattern=".*\">", replacement="", x=webLinhaDados);
+  LinhaDados <- sub(pattern=" </td>$", replacement="", x=LinhaDados);
+  LinhaDados <- sub(pattern="</td>$", replacement="", x=LinhaDados);
+  LinhaDados <- data.frame( t( c(Mercadoria, LinhaDados) ) );
+  
+  TabelaDados <- rbind(TabelaDados, LinhaDados);
+}
+names(TabelaDados) <- Titulos;
+```
+
+
+
+```{r, p4, echo=FALSE, eval=TRUE, results="as.is"}
+# Verifica se a tabela foi criada com sucesso
+library("knitr");
+kable( x=TabelaDados[c(1:10, 182:192), ] );
+```
+
+
+
+```{r, p5, echo=FALSE, eval=FALSE}
+# Tabela com as mercadorias do dia
+webTabelaMercadoria <- grep(pattern="<td>[A-Z]", x=thepage, value=TRUE);
+TabelaMercadoria <- sub(pattern=".*<td>", replacement="", x=webTabelaMercadoria);
+TabelaMercadoria <- sub(pattern=" *</td>$", replacement="", x=TabelaMercadoria);
+TabelaMercadoria[1:20];
+```
