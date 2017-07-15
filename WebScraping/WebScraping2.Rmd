@@ -1,0 +1,43 @@
+---
+title: "Web Scraping 2"
+author: "RO e VJT"
+date: "15 de julho de 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+[comment]: # (http://www.computerworld.com/article/2971265/application-development/how-to-drive-a-web-browser-with-r-and-rselenium.html)
+
+```{r, p1, echo=FALSE, eval=FALSE}
+library("RSelenium");
+
+url <- "http://www2.bmf.com.br/pages/portal/bmfbovespa/lumis/lum-ajustes-do-pregao-ptBR.asp";
+
+# Abre o navegador
+driver <- rsDriver();
+mybrowser <- driver[["client"]];
+
+
+# Campo
+mybrowser$navigate(url);
+wxbox <- mybrowser$findElement(using='css selector', "#dData1");
+wxbox$clearElement();
+wxbox$sendKeysToElement( list("11/07/2017") );
+
+# Botão
+wxbutton <- mybrowser$findElement(using='css selector', ".expand");
+wxbutton$clickElement();
+
+library("XML");
+
+teste2 <- htmlParse( mybrowser$getPageSource()[[1]], encoding = "iso-8851-1" );
+teste2a <- readHTMLTable(teste2);
+teste2a
+
+
+# Fecha o navegador
+mybrowser$close();
+```
