@@ -13,6 +13,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Automatizar a coleta de dados de datas anteriores
 
+Up1: Já consigo navegar na página, acessando datas anteriores, mas preciso ver como pegar os dados com o novo pacote.
+
 [comment]: # (http://www.bmfbovespa.com.br/pt_br/servicos/market-data/historico/mercado-de-derivativos/ajustes-do-pregao/)
 
 ```{r, p1, echo=FALSE, eval=TRUE}
@@ -22,7 +24,11 @@ library("XML");
 url <- "http://www2.bmf.com.br/pages/portal/bmfbovespa/lumis/lum-ajustes-do-pregao-ptBR.asp";
 
 # XML da página com os dados
-thepage <- readLines(url, warn=FALSE);
+thepage <- readLines(con=url, warn=FALSE);
+
+# Outra opção:
+# teste1 <- readHTMLTable(doc=url, encoding = "iso-8859-1");
+# Mas tem problema de enconding
 ```
 
 ```{r, p1_1, echo=FALSE, eval=TRUE}
@@ -87,6 +93,32 @@ kable( x=TabelaDados[c(1:10, 182:192), ] );
 
 
 ```{r, p6, echo=FALSE, eval=FALSE}
+library("RSelenium");
+
+url <- "http://www2.bmf.com.br/pages/portal/bmfbovespa/lumis/lum-ajustes-do-pregao-ptBR.asp";
+
+# Abre o navegador
+driver <- rsDriver();
+mybrowser <- driver[["client"]];
+
+
+# Campo
+mybrowser$navigate(url);
+wxbox <- mybrowser$findElement(using='css selector', "#dData1");
+wxbox$clearElement();
+wxbox$sendKeysToElement( list("11/07/2017") );
+
+# Botão
+wxbutton <- mybrowser$findElement(using='css selector', ".expand");
+wxbutton$clickElement();
+
+# Fecha o navegador
+mybrowser$close();
+```
+
+
+
+```{r, p7, echo=FALSE, eval=FALSE}
 # Tabela com as mercadorias do dia
 webTabelaMercadoria <- grep(pattern="<td>[A-Z]", x=thepage, value=TRUE);
 TabelaMercadoria <- sub(pattern=".*<td>", replacement="", x=webTabelaMercadoria);
