@@ -69,7 +69,7 @@ names(TabelaDados) <- Titulos;
 
 ```{r, p4, echo=FALSE, eval=TRUE}
 # Grava os dados num arquivo csv
-atualizadoEm2 <- gsub(pattern="/", replacement="_", x=atualizadoEm,);
+atualizadoEm2 <- gsub(pattern="/", replacement="_", x=atualizadoEm);
 
 arquivoNome <- paste("derivativos_ajuste_", atualizadoEm2, ".csv", sep="");
 
