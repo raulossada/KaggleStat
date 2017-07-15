@@ -11,8 +11,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Falta fazer
 
-Inserir a data dos dados
-
 Automatizar a coleta de dados de datas anteriores
 
 [comment]: # (http://www.bmfbovespa.com.br/pt_br/servicos/market-data/historico/mercado-de-derivativos/ajustes-do-pregao/)
@@ -27,11 +25,18 @@ url <- "http://www2.bmf.com.br/pages/portal/bmfbovespa/lumis/lum-ajustes-do-preg
 thepage <- readLines(url, warn=FALSE);
 ```
 
+```{r, p1_1, echo=FALSE, eval=TRUE}
+# Pega a data em que os dados foram atualizados
+webAtualizadoEm <- grep(pattern="<br />Atualizado", x=thepage, value=TRUE);
+atualizadoEm <- sub(pattern=".*: ", replacement="", x=webAtualizadoEm);
+```
+
 ```{r, p2, echo=FALSE, eval=TRUE}
 # Pega os nomes das colunas da tabela
 webTitulos <- grep(pattern="<th ", x=thepage, value=TRUE);
 Titulos <- sub(pattern=".*\">", replacement="", x=webTitulos);
 Titulos <- sub(pattern="</th>$", replacement="", x=Titulos);
+Titulos <- c(Titulos, "Data Atualização");
 ```
 
 ```{r, p3, echo=FALSE, eval=TRUE}
@@ -56,11 +61,19 @@ for(ii in possiveisMercadorias){
   
   TabelaDados <- rbind(TabelaDados, LinhaDados);
 }
+
+TabelaDados <- cbind(TabelaDados, atualizadoEm);
+
 names(TabelaDados) <- Titulos;
 ```
 
 ```{r, p4, echo=FALSE, eval=TRUE}
-write.csv2(x=TabelaDados, file="derivativos_ajuste.csv", row.names=FALSE);
+# Grava os dados num arquivo csv
+atualizadoEm2 <- gsub(pattern="/", replacement="_", x=atualizadoEm,);
+
+arquivoNome <- paste("derivativos_ajuste_", atualizadoEm2, ".csv", sep="");
+
+write.csv2(x=TabelaDados, file=arquivoNome, row.names=FALSE);
 ```
 
 # Tabela
