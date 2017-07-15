@@ -9,11 +9,13 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Falta
+# Falta fazer
 
 Inserir a data dos dados
 
 Automatizar a coleta de dados de datas anteriores
+
+[comment]: # (http://www.bmfbovespa.com.br/pt_br/servicos/market-data/historico/mercado-de-derivativos/ajustes-do-pregao/)
 
 ```{r, p1, echo=FALSE, eval=TRUE}
 library("XML");
@@ -57,9 +59,13 @@ for(ii in possiveisMercadorias){
 names(TabelaDados) <- Titulos;
 ```
 
+```{r, p4, echo=FALSE, eval=TRUE}
+write.csv2(x=TabelaDados, file="derivativos_ajuste.csv", row.names=FALSE);
+```
 
+# Tabela
 
-```{r, p4, echo=FALSE, eval=TRUE, results="as.is"}
+```{r, p5, echo=FALSE, eval=TRUE, results="as.is"}
 # Verifica se a tabela foi criada com sucesso
 library("knitr");
 kable( x=TabelaDados[c(1:10, 182:192), ] );
@@ -67,7 +73,7 @@ kable( x=TabelaDados[c(1:10, 182:192), ] );
 
 
 
-```{r, p5, echo=FALSE, eval=FALSE}
+```{r, p6, echo=FALSE, eval=FALSE}
 # Tabela com as mercadorias do dia
 webTabelaMercadoria <- grep(pattern="<td>[A-Z]", x=thepage, value=TRUE);
 TabelaMercadoria <- sub(pattern=".*<td>", replacement="", x=webTabelaMercadoria);
