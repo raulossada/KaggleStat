@@ -47,6 +47,7 @@ for(ii in qualitativas){
   gg <- ggplot(data=training_data, mapping=aes_string(x=colnames(training_data)[ii]) ) + 
     geom_bar() + 
     scale_y_continuous(name="Frequência Absoluta") + 
+    theme(axis.text.x = element_text(angle = 60, hjust = 1))
     theme_classic();
   print(gg);
 }
