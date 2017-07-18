@@ -1,0 +1,26 @@
+---
+title: "WebScraping4"
+author: "RO e VJT"
+date: "18 de julho de 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# VERSÃO INCOMPLETA
+
+```{r, p01, echo=FALSE, eval=FALSE}
+ms170717 <- read.table(file="http://www.anbima.com.br/merc_sec/arqs/ms170717.txt", 
+                       header=TRUE,
+                       sep="@", 
+                       skip=1);
+
+
+base <- ms170717;
+colnames(base) <- gsub(pattern="\\.", replacement="", x=colnames(base) );
+colnames(base);
+head(base);
+write.csv2(x=base, file="ms170717.csv");
+```
