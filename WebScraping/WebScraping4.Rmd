@@ -33,7 +33,7 @@ dia1 <- data2[3];
 ano2 <- data2[1];
 
 
-zUrl <- paste("http://www.anbima.com.br/merc_sec/arqs/ms", dia1, mes1, ano1, ".txt", sep="");
+zUrl <- paste("http://www.anbima.com.br/merc_sec/arqs/ms", ano1, mes1, dia1, ".txt", sep="");
 ```
 
 ```{r, p02, echo=FALSE, eval=FALSE}

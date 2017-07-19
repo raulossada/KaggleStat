@@ -1,0 +1,138 @@
+---
+title: "Web Scraping 6"
+author: "RO e VJT"
+date: "19 de julho de 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, p01, echo=FALSE, eval=FALSE}
+setwd("C:/Users/raul/Desktop/IME_BE/KaggleStat/WebScraping");
+
+zUrl <- "http://www.anbima.com.br/pt_br/informar/estatisticas/precos-e-indices/projecao-de-inflacao-gp-m.htm";
+
+library("RSelenium");
+zbrowserDriver <- rsDriver(port=4567L);
+zbrowser <- zbrowserDriver[["client"]];
+zbrowser$navigate(zUrl);
+```
+
+```{r, p02, echo=FALSE, eval=FALSE}
+zTabela1 <- zbrowser$findElement(using="css selector", ".tab-4col");
+htmlTabela1 <- zTabela1$getElementAttribute("outerHTML")[[1]];
+
+charTabela1 <- unlist( strsplit(x=htmlTabela1, split="\\n") );
+
+charTabela1 <- grep(pattern="<div>(.*?)<", x=charTabela1, value=TRUE);
+
+charTabela1 <- sub(pattern="<div>", replacement="", x=charTabela1);
+charTabela1 <- sub(pattern="</div>", replacement="", x=charTabela1);
+
+charTabela1 <- sub(pattern="<small>", replacement="", x=charTabela1);
+charTabela1 <- sub(pattern=" *</small>", replacement="", x=charTabela1);
+
+charTabela1 <- sub(pattern="<strong>", replacement="", x=charTabela1);
+charTabela1 <- sub(pattern="</strong>", replacement="", x=charTabela1);
+
+tabela1 <- data.frame( matrix(data=charTabela1[5:16], nrow=3, ncol=4, byrow=TRUE) );
+colnames(tabela1) <- charTabela1[1:4];
+```
+
+```{r, p02, echo=FALSE, eval=FALSE}
+# Essa tabela deu trabalho
+webPage <- readLines(con=zUrl, warn=FALSE, encoding = "UTF-8");
+
+webData <- grep(pattern="<div>", x=webPage, value=TRUE);
+
+idsInicio <- which(webPage %in% "<div class=\"card-body full comp-especifico\">");
+idsFim <- which(webPage %in% "<div class=\"full\">");
+
+webTabela2 <- webPage[idsInicio[1]:(idsFim[1]-1)];
+
+charTabela2 <- grep(pattern="<div>", x=webTabela2, value=TRUE);
+
+charTabela2 <- sub(pattern="<div>", replacement="", x=charTabela2);
+charTabela2 <- sub(pattern="</div>", replacement="", x=charTabela2);
+
+charTabela2 <- sub(pattern="<small>", replacement="", x=charTabela2);
+charTabela2 <- sub(pattern=" *</small>", replacement="", x=charTabela2);
+
+charTabela2 <- sub(pattern="<strong>", replacement="", x=charTabela2);
+charTabela2 <- sub(pattern=" *</strong>", replacement="", x=charTabela2);
+
+charTabela2 <- charTabela2[ which(charTabela2!="") ];
+
+tabela2 <- data.frame( matrix(data=charTabela2[4:length(charTabela2)], 
+                              nrow=3, ncol=3, byrow=TRUE) );
+colnames(tabela2) <- charTabela2[1:3];
+
+
+charTabela2a <- grep(pattern="<header>", x=webTabela2, value=TRUE);
+
+charTabela2a1 <- sub(pattern="<header>", replacement="", x=charTabela2a);
+charTabela2a1 <- sub(pattern=" *<small.*", replacement="", x=charTabela2a1);
+
+charTabela2a2 <- sub(pattern=".*<strong>", replacement="", x=charTabela2a);
+charTabela2a2 <- sub(pattern="</strong>.*", replacement="", x=charTabela2a2);
+
+tabela2$novo <- charTabela2a2;
+colnames(tabela2)[ncol(tabela2)] <- charTabela2a1;
+```
+
+```{r, p03, echo=FALSE, eval=FALSE}
+zTabela3 <- zbrowser$findElement(using="css selector", ".tab-5col");
+# class="card-body full comp-especifico tab-4col"
+# <div class="card-body full comp-especifico">
+htmlTabela3 <- zTabela3$getElementAttribute("outerHTML")[[1]];
+
+charTabela3 <- unlist( strsplit(x=htmlTabela3, split="\\n") );
+
+charTabela3 <- grep(pattern="<div>|(.*?)<br>|(.*?)</div>", x=charTabela3, value=TRUE);
+
+charTabela3 <- sub(pattern="<div>", replacement="", x=charTabela3);
+charTabela3 <- sub(pattern="</div>", replacement="", x=charTabela3);
+
+charTabela3 <- sub(pattern="<small>", replacement="", x=charTabela3);
+charTabela3 <- sub(pattern=" *</small>", replacement="", x=charTabela3);
+
+charTabela3 <- sub(pattern="<strong>", replacement="", x=charTabela3);
+charTabela3 <- sub(pattern=" *</strong>", replacement="", x=charTabela3);
+
+charTabela3 <- sub(pattern="<br>", replacement="", x=charTabela3);
+
+charTabela3 <- charTabela3[ which(charTabela3!="") ];
+
+pontosInsercao <- seq(from=6, to=length(charTabela3)+13, by=13);
+for(ii in pontosInsercao){
+  charTabela3 <- append(x=charTabela3, values=c(NA, NA), after=ii );
+}
+
+pontosInsercao2 <- seq(from=18, to=length(charTabela3)+30, by=15);
+for(ii in pontosInsercao2){
+  charTabela3 <- append(x=charTabela3, values=c(NA, NA), after=ii );
+}
+charTabela3
+
+tabela3 <- NULL;
+pontosQuebra <- seq(from=6, to=length(charTabela3), by=15);
+for(ii in pontosQuebra){
+  parcialTabela3 <- matrix(data=charTabela3[ii:(ii+14)], nrow=3, ncol=5, byrow=FALSE);
+  tabela3 <- rbind(tabela3, parcialTabela3);
+}
+tabela3 <- data.frame(tabela3);
+colnames(tabela3) <- charTabela3[1:5];
+```
+
+
+```{r, p03, echo=FALSE, eval=FALSE}
+# Fecha o navegador
+zbrowser$close();
+
+# Para o servidor do navegador
+zbrowserDriver$server$process;
+zbrowserDriver$server$stop();
+zbrowserDriver$server$process;
+```

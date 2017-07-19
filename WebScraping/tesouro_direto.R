@@ -45,8 +45,8 @@ resgatar <- resgatar[-removerLinhas2, ];
 
 
 # paste
-write.csv2(x=investir, file="investir_2017_07_18_15_34.csv", row.names=FALSE);
-write.csv2(x=resgatar, file="resgatar_2017_07_18_15_34.csv", row.names=FALSE);
+write.csv2(x=investir, file="investir_2017_07_19_15_31.csv", row.names=FALSE);
+write.csv2(x=resgatar, file="resgatar_2017_07_19_15_31.csv", row.names=FALSE);
 
 
 

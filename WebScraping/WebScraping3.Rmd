@@ -162,12 +162,12 @@ rm( list=c("atualizadoEm", "LinhaDados", "candidataMercadoria", "ii", "Mercadori
 
 ```{r, p08, echo=FALSE, eval=FALSE}
 # Grava os dados num arquivo csv para ser usado no excel
-arquivoNomeCsvPtBr <- paste("derivativos_ajuste_", atualizadoEm2, "_ptbr.csv", sep="");
-
-write.csv2(x=tabelaDados, file=arquivoNomeCsvPtBr, row.names=FALSE);
-
-arquivoNomeCsvPtBr <- paste("derivativos_ajuste_", atualizadoEm3, "_ptbr.csv", sep="");
-write.csv2(x=tabelaDados, file=arquivoNomeCsvPtBr, row.names=FALSE);
+# arquivoNomeCsvPtBr <- paste("derivativos_ajuste_", atualizadoEm2, "_ptbr.csv", sep="");
+# 
+# write.csv2(x=tabelaDados, file=arquivoNomeCsvPtBr, row.names=FALSE);
+# 
+# arquivoNomeCsvPtBr <- paste("derivativos_ajuste_", atualizadoEm3, "_ptbr.csv", sep="");
+# write.csv2(x=tabelaDados, file=arquivoNomeCsvPtBr, row.names=FALSE);
 ```
 
 ```{r, p09, echo=FALSE, eval=FALSE}
