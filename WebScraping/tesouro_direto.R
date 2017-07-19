@@ -1,5 +1,7 @@
 library("XML");
 
+# http://www.tesouro.fazenda.gov.br/tesouro-direto-precos-e-taxas-dos-titulos
+
 zUrl <- "http://www.tesouro.fazenda.gov.br/tesouro-direto-precos-e-taxas-dos-titulos";
 
 
@@ -7,7 +9,16 @@ zUrl <- "http://www.tesouro.fazenda.gov.br/tesouro-direto-precos-e-taxas-dos-tit
 webPage <- readLines(con=zUrl, warn=FALSE);
 webAtualizadoEm <- htmlParse(file=webPage, useInternalNodes=T);
 saveXML(doc=webAtualizadoEm, file="teste.xml");
+
 webPage <- readLines(con="teste.xml");
+
+arquivoNomeXml <- "teste.xml";
+if( file.exists(arquivoNomeXml)==TRUE ){
+  file.remove(arquivoNomeXml);
+}
+
+
+
 webAtualizadoEm <- grep(pattern="Atualizado em", x=webPage, value=TRUE);
 atualizadoEm <- sub(pattern=".*<b>", replacement="", x=webAtualizadoEm);
 atualizadoEm <- sub(pattern="</b>.*", replacement="", x=atualizadoEm);
@@ -32,5 +43,10 @@ investir <- investir[-removerLinhas1, ];
 removerLinhas2 <- which( resgatar$`Título` %in% c("Indexados ao IPCA", "Prefixados", "Indexados à Taxa Selic", "Indexados ao IGP-M") );
 resgatar <- resgatar[-removerLinhas2, ];
 
-write.csv2(x=investir, file="investir_2017_07_17_15_36.csv", row.names=FALSE);
-write.csv2(x=resgatar, file="resgatar_2017_07_17_15_36.csv", row.names=FALSE);
+
+# paste
+write.csv2(x=investir, file="investir_2017_07_18_15_34.csv", row.names=FALSE);
+write.csv2(x=resgatar, file="resgatar_2017_07_18_15_34.csv", row.names=FALSE);
+
+
+

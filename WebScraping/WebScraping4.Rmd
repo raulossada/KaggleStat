@@ -11,16 +11,59 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # VERSÃO INCOMPLETA
 
+[comment]: # (http://www.anbima.com.br/merc_sec/merc-sec.asp)
+
+```{r, p00, echo=FALSE, eval=FALSE}
+# Automação de tarefas via R
+# https://www.r-bloggers.com/new-rstudio-add-in-to-schedule-r-scripts/
+# https://trinkerrstuff.wordpress.com/2015/02/11/scheduling-r-tasks-via-windows-task-scheduler/
+# https://stackoverflow.com/questions/2793389/scheduling-r-script
+```
+
 ```{r, p01, echo=FALSE, eval=FALSE}
-ms170717 <- read.table(file="http://www.anbima.com.br/merc_sec/arqs/ms170717.txt", 
-                       header=TRUE,
-                       sep="@", 
-                       skip=1);
+# Mercado Secundário de Títulos Públicos Federais
+# Cria a url para pegar os dados daquele dia
+data1 <- as.character( Sys.Date()-1 );
+data2 <- unlist( strsplit(x=data1, split="-" ) );
+
+ano1 <- substr(x=data2[1], start=3, stop=4);
+mes1 <- data2[2];
+dia1 <- data2[3];
+
+ano2 <- data2[1];
 
 
-base <- ms170717;
-colnames(base) <- gsub(pattern="\\.", replacement="", x=colnames(base) );
-colnames(base);
-head(base);
-write.csv2(x=base, file="ms170717.csv");
+zUrl <- paste("http://www.anbima.com.br/merc_sec/arqs/ms", dia1, mes1, ano1, ".txt", sep="");
+```
+
+```{r, p02, echo=FALSE, eval=FALSE}
+# Pega os dados da tabela do site
+dados <- read.table(file=zUrl, header=TRUE, sep="@", skip=1, as.is=TRUE);
+
+# Altera os nomes das colunas para um formato mais compativel com um csv
+colnames(dados) <- gsub(pattern="\\.", replacement="", x=colnames(dados) );
+
+# Adiciona a data em que os dados foram atualizados
+dados$DataAtualizacao <- data1;
+```
+
+```{r, p03, echo=FALSE, eval=FALSE}
+# Carrega a função que transforma vírgulas em pontos
+source("charComma2dot.R");
+
+# Transforma as vírgulas em pontos
+dados[, 6:14] <- apply(X=dados[, 6:14], MARGIN=2, FUN=charComma2dot );
+
+# Transforma os dados numéricos no tipo numeric ...
+dados[, 6:14] <- apply(X=dados[, 6:14], MARGIN=2, FUN=as.numeric );
+# ... como existem dados que não são numéricos nas colunas
+# ... o R insere automaticamente NAs por coerção neles.
+```
+
+```{r, p04, echo=FALSE, eval=FALSE}
+# Cria o nome do arquivo com os dados
+nomeArquivo <- paste("ms", ano2, mes1, dia1, ".csv", sep="");
+
+# Escreve os dados num arquivo csv
+write.csv2(x=dados, file=nomeArquivo, row.names=FALSE);
 ```

@@ -30,13 +30,7 @@ html2char <- function(x){
   return(x);
 }
 
-charComma2dot <- function(data){
-  data <- gsub(pattern="\\.", replacement="", x=data);
-  data <- gsub(pattern=",", replacement="\\.", x=data);
-  data <- as.numeric(data);
-  
-  return(data);
-}
+source("charComma2dot.R");
 ```
 
 ```{r, p01, echo=FALSE, eval=FALSE}
@@ -180,6 +174,7 @@ write.csv2(x=tabelaDados, file=arquivoNomeCsvPtBr, row.names=FALSE);
 tabelaDados2 <- tabelaDados;
 tabelaDados2[, 3:6] <- apply( X=tabelaDados2[, 3:6], MARGIN=2, FUN=as.character );
 tabelaDados2[, 3:6] <- apply( X=tabelaDados2[, 3:6], MARGIN=2, FUN=charComma2dot );
+tabelaDados2[, 3:6] <- apply( X=tabelaDados2[, 3:6], MARGIN=2, FUN=as.numeric );
 
 # Grava os dados num arquivo csv
 arquivoNomeCsv <- paste("derivativos_ajuste_", atualizadoEm2, ".csv", sep="");
