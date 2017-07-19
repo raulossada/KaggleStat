@@ -41,7 +41,7 @@ tabela1 <- data.frame( matrix(data=charTabela1[5:16], nrow=3, ncol=4, byrow=TRUE
 colnames(tabela1) <- charTabela1[1:4];
 ```
 
-```{r, p02, echo=FALSE, eval=FALSE}
+```{r, p03, echo=FALSE, eval=FALSE}
 # Essa tabela deu trabalho
 webPage <- readLines(con=zUrl, warn=FALSE, encoding = "UTF-8");
 
@@ -82,7 +82,7 @@ tabela2$novo <- charTabela2a2;
 colnames(tabela2)[ncol(tabela2)] <- charTabela2a1;
 ```
 
-```{r, p03, echo=FALSE, eval=FALSE}
+```{r, p04, echo=FALSE, eval=FALSE}
 zTabela3 <- zbrowser$findElement(using="css selector", ".tab-5col");
 # class="card-body full comp-especifico tab-4col"
 # <div class="card-body full comp-especifico">
@@ -126,8 +126,130 @@ tabela3 <- data.frame(tabela3);
 colnames(tabela3) <- charTabela3[1:5];
 ```
 
+# IPCA
 
-```{r, p03, echo=FALSE, eval=FALSE}
+```{r, p06, echo=FALSE, eval=FALSE}
+zUrl <- "http://www.anbima.com.br/pt_br/informar/estatisticas/precos-e-indices/projecao-de-inflacao-gp-m.htm";
+
+webPage <- readLines(con=zUrl, warn=FALSE, encoding = "UTF-8");
+
+webData <- grep(pattern="<div>", x=webPage, value=TRUE);
+
+idsInicio <- which(webPage %in% "<div class=\"card-body full comp-especifico tab-4col\">");
+idsFim <- which(webPage %in% "<div class=\"full marginb20\">");
+
+webTabela4 <- webPage[idsInicio[2]:(idsFim[2]-1)];
+
+charTabela4 <- grep(pattern="<div>", x=webTabela4, value=TRUE);
+
+charTabela4 <- sub(pattern="<div>", replacement="", x=charTabela4);
+charTabela4 <- sub(pattern="</div>", replacement="", x=charTabela4);
+
+charTabela4 <- sub(pattern="<small>", replacement="", x=charTabela4);
+charTabela4 <- sub(pattern=" *</small>", replacement="", x=charTabela4);
+
+charTabela4 <- sub(pattern="<strong>", replacement="", x=charTabela4);
+charTabela4 <- sub(pattern=" *</strong>", replacement="", x=charTabela4);
+
+charTabela4 <- charTabela4[ which(charTabela4!="") ];
+
+tabela4 <- data.frame( matrix(data=charTabela4[5:12], nrow=2, ncol=4, byrow=TRUE) );
+colnames(tabela4) <- charTabela4[1:4];
+```
+
+
+```{r, p07, echo=FALSE, eval=FALSE}
+# Essa tabela deu trabalho
+webPage <- readLines(con=zUrl, warn=FALSE, encoding = "UTF-8");
+
+webData <- grep(pattern="<div>", x=webPage, value=TRUE);
+
+idsInicio <- which(webPage %in% "<div class=\"card-body full comp-especifico\">");
+idsFim <- which(webPage %in% "<div class=\"full\">");
+
+webTabela4 <- webPage[idsInicio[2]:(idsFim[2]-1)];
+
+charTabela4 <- grep(pattern="<div>", x=webTabela4, value=TRUE);
+
+charTabela4 <- sub(pattern="<div>", replacement="", x=charTabela4);
+charTabela4 <- sub(pattern="</div>", replacement="", x=charTabela4);
+
+charTabela4 <- sub(pattern="<small>", replacement="", x=charTabela4);
+charTabela4 <- sub(pattern=" *</small>", replacement="", x=charTabela4);
+
+charTabela4 <- sub(pattern="<strong>", replacement="", x=charTabela4);
+charTabela4 <- sub(pattern=" *</strong>", replacement="", x=charTabela4);
+
+charTabela4 <- charTabela4[ which(charTabela4!="") ];
+
+tabela4 <- data.frame( matrix(data=charTabela4[4:length(charTabela4)], 
+                              nrow=2, ncol=3, byrow=TRUE) );
+colnames(tabela4) <- charTabela4[1:3];
+
+
+charTabela4a <- grep(pattern="<header>", x=webTabela4, value=TRUE);
+
+charTabela4a1 <- sub(pattern="<header>", replacement="", x=charTabela4a);
+charTabela4a1 <- sub(pattern=" *<small.*", replacement="", x=charTabela4a1);
+
+charTabela4a2 <- sub(pattern=".*<strong>", replacement="", x=charTabela4a);
+charTabela4a2 <- sub(pattern="</strong>.*", replacement="", x=charTabela4a2);
+
+tabela4$novo <- charTabela4a2;
+colnames(tabela4)[ncol(tabela4)] <- charTabela4a1;
+```
+
+```{r, p08, echo=FALSE, eval=FALSE}
+webPage <- readLines(con=zUrl, warn=FALSE, encoding = "UTF-8");
+
+webData <- grep(pattern="<div>", x=webPage, value=TRUE);
+
+idsInicio <- which(webPage %in% "<div class=\"card-body full comp-especifico tab-5col\">");
+idsFim <- which(webPage %in% "</main>");
+
+webTabela5 <- webPage[idsInicio[2]:(idsFim-1)];
+
+charTabela5 <- grep(pattern="<div>|(.*?)<br>|(.*?)</div>", x=webTabela5, value=TRUE);
+
+charTabela5 <- sub(pattern="<div>", replacement="", x=charTabela5);
+charTabela5 <- sub(pattern="</div>", replacement="", x=charTabela5);
+
+charTabela5 <- sub(pattern="<small>", replacement="", x=charTabela5);
+charTabela5 <- sub(pattern=" *</small>", replacement="", x=charTabela5);
+
+charTabela5 <- sub(pattern="<strong>", replacement="", x=charTabela5);
+charTabela5 <- sub(pattern=" *</strong>", replacement="", x=charTabela5);
+
+charTabela5 <- sub(pattern="<br>", replacement="", x=charTabela5);
+
+charTabela5 <- charTabela5[ which(charTabela5!="") ];
+
+
+
+pontosInsercao <- seq(from=6, to=length(charTabela5)+9, by=9);
+for(ii in pontosInsercao){
+  charTabela5 <- append(x=charTabela5, values=c(NA), after=ii );
+}
+
+pontosInsercao2 <- seq(from=14, to=(length(charTabela5)+10), by=10);
+for(ii in pontosInsercao2){
+  charTabela5 <- append(x=charTabela5, values=c(NA), after=ii );
+}
+
+
+
+tabela5 <- NULL;
+pontosQuebra <- seq(from=6, to=length(charTabela5), by=10);
+for(ii in pontosQuebra){
+  parcialTabela5 <- matrix(data=charTabela5[ii:(ii+9)], nrow=2, ncol=5, byrow=FALSE);
+  tabela5 <- rbind(tabela5, parcialTabela5);
+}
+tabela5 <- data.frame(tabela5);
+colnames(tabela5) <- charTabela5[1:5];
+```
+
+
+```{r, p09, echo=FALSE, eval=FALSE}
 # Fecha o navegador
 zbrowser$close();
 
