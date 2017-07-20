@@ -34,6 +34,7 @@ source("charComma2dot.R");
 ```
 
 ```{r, p01, echo=FALSE, eval=FALSE}
+# BMF Ajustes do Pregao
 library("RSelenium");
 
 zUrl <- "http://www2.bmf.com.br/pages/portal/bmfbovespa/lumis/lum-ajustes-do-pregao-ptBR.asp";
@@ -177,9 +178,8 @@ tabelaDados2[, 3:6] <- apply( X=tabelaDados2[, 3:6], MARGIN=2, FUN=charComma2dot
 tabelaDados2[, 3:6] <- apply( X=tabelaDados2[, 3:6], MARGIN=2, FUN=as.numeric );
 
 # Grava os dados num arquivo csv
-arquivoNomeCsv <- paste("derivativos_ajuste_", atualizadoEm2, ".csv", sep="");
-
-write.csv2(x=tabelaDados2, file=arquivoNomeCsv, row.names=FALSE);
+# arquivoNomeCsv <- paste("derivativos_ajuste_", atualizadoEm2, ".csv", sep="");
+# write.csv2(x=tabelaDados2, file=arquivoNomeCsv, row.names=FALSE);
 
 arquivoNomeCsv <- paste("derivativos_ajuste_", atualizadoEm3, ".csv", sep="");
 write.csv2(x=tabelaDados2, file=arquivoNomeCsv, row.names=FALSE);

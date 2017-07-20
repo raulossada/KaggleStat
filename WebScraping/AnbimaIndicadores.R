@@ -1,20 +1,84 @@
-zUrl <- "http://www.bmfbovespa.com.br/pt_br/servicos/market-data/consultas/mercado-de-derivativos/indicadores/indicadores-financeiros/"
+setwd("C:/Users/raul/Desktop/IME_BE/KaggleStat/WebScraping");
 
+# url do site
+zUrl <- "http://www.bmfbovespa.com.br/pt_br/servicos/market-data/consultas/mercado-de-derivativos/indicadores/indicadores-financeiros/"
 
 library("XML");
 
-tabelas <- readHTMLTable(doc=zUrl);
-
-tabela1 <- tabelas[[1]];
-
-tabela2 <- tabelas[[2]];
-
-tabela3 <- tabelas[[3]];
-
-tabela4 <- tabelas[[4]];
-
-colnames(tabela4)
-
-#####
+#################################################################################
+# Pega as datas de atualização
 thepage <- readLines(con=zUrl, warn=FALSE);
-datalines <- grep(pattern="<p align=\"right\" class=\"legenda\">atualizado em:", thepage, value=TRUE);
+datalines <- grep(pattern="<p align=\"right\" class=\"legenda\">atualizado em:", 
+                  x=thepage, value=TRUE);
+
+datasAtualizacao <- gsub(pattern=".*: ", replacement="", x=datalines );
+datasAtualizacao <- gsub(pattern="<.*", replacement="", x=datasAtualizacao );
+
+
+#################################################################################
+# Pega as tabelas da página HTML
+tabelas <- readHTMLTable(doc=zUrl, warn=FALSE);
+
+# Separa as tabelas. 
+# Taxa Selic
+tabela1 <- tabelas[[1]];
+tabela1$data_atualizacao <- datasAtualizacao[1];
+
+# Dólar Casado R$/US$
+tabela2 <- tabelas[[2]];
+colnames(tabela2) <- "Dólar Casado R$/US$";
+tabela2$data_atualizacao <- datasAtualizacao[2];
+
+# Dólar - Cupom Limpo R$/US$
+tabela3 <- tabelas[[3]];
+colnames(tabela3) <- "Dólar - Cupom Limpo R$/US$";
+tabela3$data_atualizacao <- datasAtualizacao[3];
+
+
+# Taxas de câmbio referenciais BM&FBOVESPA
+tabela4 <- tabelas[[4]];
+tabela4[, 1] <- as.character(tabela4[, 1]);
+
+taxa1 <- gsub(pattern="\n.*", replacement="", x=tabela4[1, 1] );
+taxa2 <- gsub(pattern=".*\t", replacement="", x=tabela4[1, 1] );
+
+tabela4a <- cbind( c(taxa1, taxa2), c(tabela4[3, 1], NA), c(tabela4[5, 1], NA) );
+tabela4a <- data.frame(tabela4a);
+colnames(tabela4a) <- c("Taxas de câmbio referenciais BM&FBOVESPA", 
+                        tabela4[2, 1], tabela4[4, 1] );
+
+
+#################################################################################
+# Salva a tabela 1 num arquivo
+atualizacaoData1 <- unlist( strsplit(x=datasAtualizacao[1], split="/") );
+atualizacaoData1 <- paste(atualizacaoData1[3], atualizacaoData1[2], atualizacaoData1[1], sep="_");
+
+nomeTabela1 <- paste("taxaSelic_", atualizacaoData1, ".csv", sep="");
+write.csv2(x=tabela1, file=nomeTabela1, row.names=FALSE);
+
+
+#################################################################################
+# Salva a tabela 2 num arquivo
+atualizacaoData2 <- unlist( strsplit(x=datasAtualizacao[2], split="/") );
+atualizacaoData2 <- paste(atualizacaoData2[3], atualizacaoData2[2], atualizacaoData2[1], sep="_");
+
+nomeTabela2 <- paste("dolarCasado_", atualizacaoData2, ".csv", sep="");
+write.csv2(x=tabela2, file=nomeTabela2, row.names=FALSE);
+
+#################################################################################
+# Salva a tabela 3 num arquivo
+atualizacaoData3 <- unlist( strsplit(x=datasAtualizacao[3], split="/") );
+atualizacaoData3 <- paste(atualizacaoData3[3], atualizacaoData3[2], atualizacaoData3[1], sep="_");
+
+nomeTabela3 <- paste("dolarCupomLimpo_", atualizacaoData3, ".csv", sep="");
+write.csv2(x=tabela3, file=nomeTabela3, row.names=FALSE);
+
+
+#################################################################################
+# Salva a tabela 4 num arquivo
+atualizacaoData4 <- unlist( strsplit(x=datasAtualizacao[4], split="/") );
+atualizacaoData4 <- paste(atualizacaoData4[3], atualizacaoData4[2], atualizacaoData4[1], sep="_");
+
+nomeTabela4a <- paste("taxaCambioReferenciais_", atualizacaoData4, ".csv", sep="");
+write.csv2(x=tabela4a, file=nomeTabela4a, row.names=FALSE);
+

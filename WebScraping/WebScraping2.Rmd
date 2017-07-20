@@ -9,8 +9,6 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# VERSÃO INCOMPLETA
-
 [comment]: # (http://www.anbima.com.br/merc_sec/merc-sec.asp)
 
 ```{r, p00, echo=FALSE, eval=FALSE}
@@ -21,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, p01, echo=FALSE, eval=FALSE}
-# Mercado Secundário de Títulos Públicos Federais
+# ANBIMA Mercado Secundário de Títulos Públicos Federais
 # Cria a url para pegar os dados daquele dia
 data1 <- as.character( Sys.Date()-1 );
 data2 <- unlist( strsplit(x=data1, split="-" ) );
@@ -44,18 +42,18 @@ dados <- read.table(file=zUrl, header=TRUE, sep="@", skip=1, as.is=TRUE);
 colnames(dados) <- gsub(pattern="\\.", replacement="", x=colnames(dados) );
 
 # Adiciona a data em que os dados foram atualizados
-dados$DataAtualizacao <- data1;
+# dados$DataAtualizacao <- data1;
 ```
 
 ```{r, p03, echo=FALSE, eval=FALSE}
 # Carrega a função que transforma vírgulas em pontos
-source("charComma2dot.R");
+# source("charComma2dot.R");
 
 # Transforma as vírgulas em pontos
-dados[, 6:14] <- apply(X=dados[, 6:14], MARGIN=2, FUN=charComma2dot );
+# dados[, 6:14] <- apply(X=dados[, 6:14], MARGIN=2, FUN=charComma2dot );
 
 # Transforma os dados numéricos no tipo numeric ...
-dados[, 6:14] <- apply(X=dados[, 6:14], MARGIN=2, FUN=as.numeric );
+# dados[, 6:14] <- apply(X=dados[, 6:14], MARGIN=2, FUN=as.numeric );
 # ... como existem dados que não são numéricos nas colunas
 # ... o R insere automaticamente NAs por coerção neles.
 ```

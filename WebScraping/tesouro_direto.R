@@ -1,52 +1,101 @@
-library("XML");
-
 # http://www.tesouro.fazenda.gov.br/tesouro-direto-precos-e-taxas-dos-titulos
 
+library("XML");
+source("charComma2dot.R");
+
+setwd("C:/Users/raul/Desktop/IME_BE/KaggleStat/WebScraping");
+
+# url do site
 zUrl <- "http://www.tesouro.fazenda.gov.br/tesouro-direto-precos-e-taxas-dos-titulos";
 
-
-
+# Lê o arquivo html do site
 webPage <- readLines(con=zUrl, warn=FALSE);
+
+# Abre os nós do arquivo do site
 webAtualizadoEm <- htmlParse(file=webPage, useInternalNodes=T);
-saveXML(doc=webAtualizadoEm, file="teste.xml");
 
-webPage <- readLines(con="teste.xml");
 
-arquivoNomeXml <- "teste.xml";
+####################################################################################
+# Salva num arquivo que eu vou conseguir trabalhar depois. 
+# Por que eu não sei fazer de outro jeito até o momento
+arquivoNomeXml <- "temp_tesouroDireto.xml";
+saveXML(doc=webAtualizadoEm, file=arquivoNomeXml);
+
+# Le o arquivo que eu salvei
+webPage <- readLines(con=arquivoNomeXml);
+
+# Remove o arquivo pois não vou usá-lo mais
 if( file.exists(arquivoNomeXml)==TRUE ){
   file.remove(arquivoNomeXml);
 }
 
+rm(arquivoNomeXml);
 
-
+####################################################################################
+# Pega a linha que tem a data em que a página foi atualizada
 webAtualizadoEm <- grep(pattern="Atualizado em", x=webPage, value=TRUE);
+
+# Retira da linha apenas a data e a hora
 atualizadoEm <- sub(pattern=".*<b>", replacement="", x=webAtualizadoEm);
 atualizadoEm <- sub(pattern="</b>.*", replacement="", x=atualizadoEm);
 data_hora <- unlist( strsplit(x=atualizadoEm, split=" ") );
 
 
-
+####################################################################################
+# Lê as tabelas da página
 webTabelas <- readHTMLTable(doc=zUrl, header=TRUE, encoding="UTF-8");
+
+# Separa a tabela investir
 investir <- webTabelas[[2]];
+# Insere a data e a hora de atualização dos dados
 investir$atualizado_data <- data_hora[1];
 investir$atualizado_hora <- data_hora[2];
 
 
+# Separa a tabela resgatar
 resgatar <- webTabelas[[4]];
+# Insere a data e a hora de atualização dos dados
 resgatar$atualizado_data <- data_hora[1];
 resgatar$atualizado_hora <- data_hora[2];
 
 
-removerLinhas1 <- which( investir$`Título` %in% c("Indexados ao IPCA", "Prefixados", "Indexados à Taxa Selic", "Indexados ao IGP-M") );
+####################################################################################
+# Remove as linhas dos subtitulos, pois elas só servem pra facilitar a leitura na web
+removerLinhas1 <- which( investir$`Título` %in% c("Indexados ao IPCA", 
+                                                  "Prefixados", 
+                                                  "Indexados à Taxa Selic", 
+                                                  "Indexados ao IGP-M") );
 investir <- investir[-removerLinhas1, ];
 
-removerLinhas2 <- which( resgatar$`Título` %in% c("Indexados ao IPCA", "Prefixados", "Indexados à Taxa Selic", "Indexados ao IGP-M") );
+# Remove as linhas dos subtitulos, pois elas só servem pra facilitar a leitura na web
+removerLinhas2 <- which( resgatar$`Título` %in% c("Indexados ao IPCA", 
+                                                  "Prefixados", 
+                                                  "Indexados à Taxa Selic", 
+                                                  "Indexados ao IGP-M") );
 resgatar <- resgatar[-removerLinhas2, ];
 
 
-# paste
-write.csv2(x=investir, file="investir_2017_07_19_15_31.csv", row.names=FALSE);
-write.csv2(x=resgatar, file="resgatar_2017_07_19_15_31.csv", row.names=FALSE);
+####################################################################################
+# Cria o nome do arquivo de saída
+atualizacaoData <- data_hora[1];
+atualizacaoData <- unlist( strsplit(x=atualizacaoData, split="/") );
+atualizacaoData <- paste(atualizacaoData[3], atualizacaoData[2], atualizacaoData[1], sep="_");
+
+atualizacaoHora <- data_hora[2];
+atualizacaoHora <- gsub(pattern=":", replacement="_", x=atualizacaoHora);
+
+nomeDataHora <- paste(atualizacaoData, "_", atualizacaoHora, sep="");
 
 
+####################################################################################
+# Salva os arquivos com os dados de investir e resgatar
 
+nomeInvestir <- paste("investir_", nomeDataHora, ".csv", sep="");
+write.csv2(x=investir, file=nomeInvestir, row.names=FALSE);
+
+nomeResgatar <- paste("resgatar_", nomeDataHora, ".csv", sep="");
+write.csv2(x=resgatar, file=nomeResgatar, row.names=FALSE);
+
+####################################################################################
+# Remove todos os objetos
+rm( list=ls() );
