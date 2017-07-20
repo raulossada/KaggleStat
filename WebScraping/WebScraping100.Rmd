@@ -1,3 +1,15 @@
+---
+title: "Web Scraping 3"
+author: "RO e VJT"
+date: "20 de julho de 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, p01, echo=FALSE, eval=FALSE}
 # http://www.tesouro.fazenda.gov.br/tesouro-direto-precos-e-taxas-dos-titulos
 
 library("XML");
@@ -99,3 +111,5 @@ write.csv2(x=resgatar, file=nomeResgatar, row.names=FALSE);
 ####################################################################################
 # Remove todos os objetos
 rm( list=ls() );
+```
+
