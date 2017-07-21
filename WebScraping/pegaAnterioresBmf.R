@@ -18,8 +18,6 @@ html2char <- function(x){
   return(x);
 }
 
-source("charComma2dot.R");
-
 #############################################################################
 
 library("RSelenium");
@@ -35,8 +33,8 @@ zbrowser$navigate(zUrl);
 
 #############################################################################
 
-listaDatas <- seq(from=as.Date("07/07/2017", format="%d/%m/%Y"), 
-                  to=as.Date("10/07/2017", format="%d/%m/%Y"), 
+listaDatas <- seq(from=as.Date("01/06/2017", format="%d/%m/%Y"), 
+                  to=as.Date("14/06/2017", format="%d/%m/%Y"), 
                   by="days");
 listaDatas <- format(x=listaDatas, "%d/%m/%Y");
 
@@ -158,18 +156,13 @@ for(dataEscolhida in listaDatas){
       
       #############################################################################
       
-      tabelaDados2 <- tabelaDados;
-      tabelaDados2[, 3:6] <- apply( X=tabelaDados2[, 3:6], MARGIN=2, FUN=as.character );
-      tabelaDados2[, 3:6] <- apply( X=tabelaDados2[, 3:6], MARGIN=2, FUN=charComma2dot );
-      tabelaDados2[, 3:6] <- apply( X=tabelaDados2[, 3:6], MARGIN=2, FUN=as.numeric );
+      arquivoNomeCsvPtBr <- paste("derivativos_ajuste_", atualizadoEm3, ".csv", sep="");
       
-      arquivoNomeCsv <- paste("derivativos_ajuste_", atualizadoEm3, ".csv", sep="");
-      
-      if( file.exists(arquivoNomeCsv)==FALSE ){
-        write.csv2(x=tabelaDados2, file=arquivoNomeCsv, row.names=FALSE);
+      if( file.exists(arquivoNomeCsvPtBr)==FALSE ){
+        write.csv2(x=tabelaDados, file=arquivoNomeCsvPtBr, row.names=FALSE);
       }
       
-      rm( list=c("tabelaDados", "tabelaDados2", "arquivoNomeCsv", 
+      rm( list=c("tabelaDados", "arquivoNomeCsvPtBr", 
                  "atualizadoEm2", "atualizadoEm3") );
     })
   }, error=function(e){
@@ -185,4 +178,4 @@ zbrowserDriver$server$process;
 zbrowserDriver$server$stop();
 zbrowserDriver$server$process;
 
-rm( list=c("zbrowser", "zbrowserDriver", "charComma2dot", "html2char", "listaDatas", "zUrl") );
+rm( list=c("zbrowser", "zbrowserDriver", "html2char", "listaDatas", "zUrl") );

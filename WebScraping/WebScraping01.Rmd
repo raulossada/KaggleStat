@@ -164,25 +164,24 @@ rm( list=c("atualizadoEm", "LinhaDados", "candidataMercadoria", "ii", "Mercadori
 ```{r, p08, echo=FALSE, eval=FALSE}
 # Grava os dados num arquivo csv para ser usado no excel
 # arquivoNomeCsvPtBr <- paste("derivativos_ajuste_", atualizadoEm2, "_ptbr.csv", sep="");
-# 
 # write.csv2(x=tabelaDados, file=arquivoNomeCsvPtBr, row.names=FALSE);
 # 
-# arquivoNomeCsvPtBr <- paste("derivativos_ajuste_", atualizadoEm3, "_ptbr.csv", sep="");
-# write.csv2(x=tabelaDados, file=arquivoNomeCsvPtBr, row.names=FALSE);
+arquivoNomeCsvPtBr <- paste("derivativos_ajuste_", atualizadoEm3, ".csv", sep="");
+write.csv2(x=tabelaDados, file=arquivoNomeCsvPtBr, row.names=FALSE);
 ```
 
 ```{r, p09, echo=FALSE, eval=FALSE}
-tabelaDados2 <- tabelaDados;
-tabelaDados2[, 3:6] <- apply( X=tabelaDados2[, 3:6], MARGIN=2, FUN=as.character );
-tabelaDados2[, 3:6] <- apply( X=tabelaDados2[, 3:6], MARGIN=2, FUN=charComma2dot );
-tabelaDados2[, 3:6] <- apply( X=tabelaDados2[, 3:6], MARGIN=2, FUN=as.numeric );
+# tabelaDados2 <- tabelaDados;
+# tabelaDados2[, 3:6] <- apply( X=tabelaDados2[, 3:6], MARGIN=2, FUN=as.character );
+# tabelaDados2[, 3:6] <- apply( X=tabelaDados2[, 3:6], MARGIN=2, FUN=charComma2dot );
+# tabelaDados2[, 3:6] <- apply( X=tabelaDados2[, 3:6], MARGIN=2, FUN=as.numeric );
 
 # Grava os dados num arquivo csv
 # arquivoNomeCsv <- paste("derivativos_ajuste_", atualizadoEm2, ".csv", sep="");
 # write.csv2(x=tabelaDados2, file=arquivoNomeCsv, row.names=FALSE);
 
-arquivoNomeCsv <- paste("derivativos_ajuste_", atualizadoEm3, ".csv", sep="");
-write.csv2(x=tabelaDados2, file=arquivoNomeCsv, row.names=FALSE);
+# arquivoNomeCsv <- paste("derivativos_ajuste_", atualizadoEm3, ".csv", sep="");
+# write.csv2(x=tabelaDados2, file=arquivoNomeCsv, row.names=FALSE);
 
 rm( list=c("tabelaDados", "tabelaDados2", "arquivoNomeCsv", "arquivoNomeCsvPtBr", 
            "atualizadoEm2", "atualizadoEm3") );
