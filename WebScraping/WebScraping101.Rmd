@@ -93,4 +93,9 @@ atualizacaoData4 <- paste(atualizacaoData4[3], atualizacaoData4[2], atualizacaoD
 
 nomeTabela4a <- paste("taxaCambioReferenciais_", atualizacaoData4, ".csv", sep="");
 write.csv2(x=tabela4a, file=nomeTabela4a, row.names=FALSE);
+
+
+#################################################################################
+# Remove todos os objetos
+rm( list=ls() );
 ```

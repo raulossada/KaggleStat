@@ -30,7 +30,7 @@ html2char <- function(x){
   return(x);
 }
 
-source("charComma2dot.R");
+# source("charComma2dot.R");
 ```
 
 ```{r, p01, echo=FALSE, eval=FALSE}

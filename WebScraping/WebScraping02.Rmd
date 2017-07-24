@@ -64,4 +64,7 @@ nomeArquivo <- paste("ms", ano2, mes1, dia1, ".csv", sep="");
 
 # Escreve os dados num arquivo csv
 write.csv2(x=dados, file=nomeArquivo, row.names=FALSE);
+
+# Remove todos os objetos
+rm( list=ls() );
 ```
