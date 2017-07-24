@@ -33,8 +33,8 @@ zbrowser$navigate(zUrl);
 
 #############################################################################
 
-listaDatas <- seq(from=as.Date("01/06/2017", format="%d/%m/%Y"), 
-                  to=as.Date("14/06/2017", format="%d/%m/%Y"), 
+listaDatas <- seq(from=as.Date("17/05/2017", format="%d/%m/%Y"), 
+                  to=as.Date("31/05/2017", format="%d/%m/%Y"), 
                   by="days");
 listaDatas <- format(x=listaDatas, "%d/%m/%Y");
 
