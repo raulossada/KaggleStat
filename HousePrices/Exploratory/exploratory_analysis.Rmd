@@ -26,11 +26,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, f2, eval=TRUE, echo=FALSE}
 # Importando dados
 training_data <- read.csv(file="../Data/train.csv", as.is=FALSE);
-remover_colunas <- c("Id");
+remover_colunas <- c("Id"); #Boa Raul!
 training_data <- training_data[ , !(names(training_data) %in% remover_colunas ) ];
 
 # Transformando as variáveis qualitativas que aparecem como um código numérico em fatores
 training_data$MSSubClass <- as.factor(training_data$MSSubClass);
+training_data$OverallQual <- as.factor(training_data$OverallQual);
+training_data$OverallCond <- as.factor(training_data$OverallCond);
 
 # Tipos das variáves
 vars_tipo <- sapply(X=training_data, FUN=class);
