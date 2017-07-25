@@ -14,6 +14,22 @@ fig_caption: yes
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r, f0, eval=TRUE, echo=FALSE, warning=FALSE}
+#Pacotes que serão utilizados
+#ir incluindo em libs novos pacotes
+libs = c('ggplot2','corrplot');
+for(ii in libs){
+  if(!( ii %in% installed.packages())){
+    install.packages(ii);
+  }
+  library(ii, character.only=TRUE );
+}
+
+
+```
+
+
+
 # 1 ANÁLISE EXPLORATÓRIA DOS DADOS
 
 ```{r, f1, eval=TRUE, echo=FALSE}
@@ -31,8 +47,8 @@ training_data <- training_data[ , !(names(training_data) %in% remover_colunas ) 
 
 # Transformando as variáveis qualitativas que aparecem como um código numérico em fatores
 training_data$MSSubClass <- as.factor(training_data$MSSubClass);
-training_data$OverallQual <- as.factor(training_data$OverallQual);
-training_data$OverallCond <- as.factor(training_data$OverallCond);
+training_data$OverallQual <- factor(training_data$OverallQual,levels= c(1,2,3,4,5,6,7,8,9,10));
+training_data$OverallCond <- factor(training_data$OverallCond,levels= c(1,2,3,4,5,6,7,8,9,10));
 
 # Tipos das variáves
 vars_tipo <- sapply(X=training_data, FUN=class);
@@ -41,7 +57,6 @@ vars_tipo <- sapply(X=training_data, FUN=class);
 ## 1.1 GRÁFICOS DAS VARIÁVEIS QUALITATIVAS
 
 ```{r, f3, eval=TRUE, echo=FALSE, warning=FALSE}
-library("ggplot2");
 
 qualitativas <- which(vars_tipo=="factor");
 
@@ -49,8 +64,8 @@ for(ii in qualitativas){
   gg <- ggplot(data=training_data, mapping=aes_string(x=colnames(training_data)[ii]) ) + 
     geom_bar() + 
     scale_y_continuous(name="Frequência Absoluta") + 
+    theme_classic()+
     theme(axis.text.x = element_text(angle = 60, hjust = 1))
-    theme_classic();
   print(gg);
 }
 ```
@@ -65,14 +80,30 @@ for(ii in quantitativas){
                mapping=aes_string(x=colnames(training_data)[ii]) ) + 
     geom_histogram() + 
     scale_y_continuous(name="Frequência Absoluta") + 
-    theme_classic();
+    theme_classic()+
+    theme(axis.text.x = element_text(angle = 60, hjust = 1))
   print(gg);
 }
 ```
 
 \newpage
 
+
+```{r, f5, eval=TRUE, echo=FALSE, warning=FALSE}
+#Matriz de Correlação entre as variáveis
+var_quant <- training_data[quantitativas] #Seleciona as variáveis quantitativas de training_data
+cor_quant <- cor(var_quant) #cria a matriz de correlação
+
+corrplot(cor_quant, method = "circle") #plota a matriz de correlação com círculos
+
+```
+
+
 # APÊNDICES
+
+
+```{r, f0, eval=FALSE, echo=TRUE}
+```
 
 ```{r, f1, eval=FALSE, echo=TRUE}
 ```
@@ -85,3 +116,7 @@ for(ii in quantitativas){
 
 ```{r, f4, eval=FALSE, echo=TRUE}
 ```
+
+```{r, f5, eval=FALSE, echo=TRUE}
+```
+
