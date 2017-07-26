@@ -61,7 +61,8 @@ Assumimos uma correlação acima de 0,5 como sendo relevante para a análise.
 ```{r, f2, eval=TRUE, echo=FALSE, warning=FALSE}
 #Criando a tabela de correlações de interesse
 
-cor_quant
+matriz_interesse <- cor_quant[cor_quant>0.5]
+corrplot(matriz_interesse, method = "circle") #plota a matriz de correlação com círculos
 
 
 ```
