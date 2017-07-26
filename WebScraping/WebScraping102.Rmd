@@ -1,0 +1,328 @@
+---
+title: "Web Scraping 6"
+author: "RO e VJT"
+date: "19 de julho de 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, p00, echo=FALSE, eval=FALSE}
+# ANBIMA PROJECAO
+setwd("C:/Users/raul/Desktop/IME_BE/KaggleStat/WebScraping");
+
+zUrl <- "http://www.anbima.com.br/pt_br/informar/estatisticas/precos-e-indices/projecao-de-inflacao-gp-m.htm";
+
+webPage <- readLines(con=zUrl, warn=FALSE, encoding = "UTF-8");
+
+webData <- grep(pattern="<div>", x=webPage, value=TRUE);
+
+dataColeta <- gsub(pattern="-", replacement="_", x=Sys.Date() );
+```
+
+```{r, p01, echo=FALSE, eval=FALSE}
+idsInicio <- which(webPage %in% "<div class=\"card-body full comp-especifico tab-4col\">");
+idsFim <- which(webPage %in% "<div class=\"full marginb20\">");
+
+webTabela1 <- webPage[idsInicio[1]:(idsFim[1]-1)];
+
+charTabela1 <- grep(pattern="<div>", x=webTabela1, value=TRUE);
+
+charTabela1 <- sub(pattern="<div>", replacement="", x=charTabela1);
+charTabela1 <- sub(pattern="</div>", replacement="", x=charTabela1);
+
+charTabela1 <- sub(pattern="<small>", replacement="", x=charTabela1);
+charTabela1 <- sub(pattern=" *</small>", replacement="", x=charTabela1);
+
+charTabela1 <- sub(pattern="<strong>", replacement="", x=charTabela1);
+charTabela1 <- sub(pattern=" *</strong>", replacement="", x=charTabela1);
+
+charTabela1 <- charTabela1[ which(charTabela1!="") ];
+
+#################################################################################
+
+num_colunas1 <- 4;
+num_linhas1 <- (length(charTabela1)/num_colunas1)-1;
+
+tabela1 <- data.frame( matrix(data=charTabela1[5:length(charTabela1)], 
+                              nrow=num_linhas1, ncol=num_colunas1, byrow=TRUE) );
+colnames(tabela1) <- charTabela1[1:num_colunas1];
+
+#################################################################################
+
+tabela1$data_coleta <- dataColeta;
+
+nomeTabela1 <- paste("igpm_projecoes_mes_", dataColeta, ".csv", sep="");
+write.csv2(x=tabela1, file=nomeTabela1, row.names=FALSE);
+
+rm( list=c("tabela1", "charTabela1", "idsFim", "idsInicio", "nomeTabela1", 
+           "num_colunas1", "num_linhas1", "webTabela1") );
+```
+
+```{r, p02, echo=FALSE, eval=FALSE}
+# Essa tabela deu trabalho
+idsInicio <- which(webPage %in% "<div class=\"card-body full comp-especifico\">");
+idsFim <- which(webPage %in% "<div class=\"full\">");
+
+webTabela2 <- webPage[idsInicio[1]:(idsFim[1]-1)];
+
+charTabela2 <- grep(pattern="<div>", x=webTabela2, value=TRUE);
+
+charTabela2 <- sub(pattern="<div>", replacement="", x=charTabela2);
+charTabela2 <- sub(pattern="</div>", replacement="", x=charTabela2);
+
+charTabela2 <- sub(pattern="<small>", replacement="", x=charTabela2);
+charTabela2 <- sub(pattern=" *</small>", replacement="", x=charTabela2);
+
+charTabela2 <- sub(pattern="<strong>", replacement="", x=charTabela2);
+charTabela2 <- sub(pattern=" *</strong>", replacement="", x=charTabela2);
+
+charTabela2 <- charTabela2[ which(charTabela2!="") ];
+
+#################################################################################
+
+num_colunas2 <- 3;
+num_linhas2 <- (length(charTabela2)/num_colunas2)-1;
+
+tabela2 <- data.frame( matrix(data=charTabela2[4:length(charTabela2)], 
+                              nrow=num_linhas2, ncol=num_colunas2, byrow=TRUE) );
+colnames(tabela2) <- charTabela2[1:num_colunas2];
+
+#################################################################################
+
+charTabela2a <- grep(pattern="<header>", x=webTabela2, value=TRUE);
+
+charTabela2a1 <- sub(pattern="<header>", replacement="", x=charTabela2a);
+charTabela2a1 <- sub(pattern=" *<small.*", replacement="", x=charTabela2a1);
+
+charTabela2a2 <- sub(pattern=".*<strong>", replacement="", x=charTabela2a);
+charTabela2a2 <- sub(pattern="</strong>.*", replacement="", x=charTabela2a2);
+
+tabela2$novo <- charTabela2a2;
+colnames(tabela2)[ncol(tabela2)] <- charTabela2a1;
+
+#################################################################################
+
+tabela2$data_coleta <- dataColeta;
+
+nomeTabela2 <- paste("igpm_projecoes_mes_posterior_", dataColeta, ".csv", sep="");
+write.csv2(x=tabela2, file=nomeTabela2, row.names=FALSE);
+
+rm( list=c("tabela2", "charTabela2", "charTabela2a", "charTabela2a1", "charTabela2a2", 
+           "idsFim", "idsInicio", "nomeTabela2", "num_colunas2", "num_linhas2", 
+           "webTabela2") );
+```
+
+```{r, p03, echo=FALSE, eval=FALSE}
+idsInicio <- which(webPage %in% "<div class=\"card-body full comp-especifico tab-5col\">");
+idsFim <- which(webPage %in% "<div class=\"tab-pane fade\" id=\"profile\" role=\"tabpanel\">");
+
+webTabela3 <- webPage[idsInicio[1]:(idsFim-1)];
+
+charTabela3 <- grep(pattern="<div>|(.*?)<br>|(.*?)</div>", x=webTabela3, value=TRUE);
+
+charTabela3 <- sub(pattern="<div>", replacement="", x=charTabela3);
+charTabela3 <- sub(pattern="</div>", replacement="", x=charTabela3);
+
+charTabela3 <- sub(pattern="<small>", replacement="", x=charTabela3);
+charTabela3 <- sub(pattern=" *</small>", replacement="", x=charTabela3);
+
+charTabela3 <- sub(pattern="<strong>", replacement="", x=charTabela3);
+charTabela3 <- sub(pattern=" *</strong>", replacement="", x=charTabela3);
+
+charTabela3 <- sub(pattern="<br>", replacement="", x=charTabela3);
+
+charTabela3 <- charTabela3[ which(charTabela3!="") ];
+
+#################################################################################
+
+pontosInsercao <- seq(from=6, to=length(charTabela3)+13, by=13);
+for(ii in pontosInsercao){
+  charTabela3 <- append(x=charTabela3, values=c(NA, NA), after=ii );
+}
+
+pontosInsercao2 <- seq(from=18, to=length(charTabela3)+30, by=15);
+for(ii in pontosInsercao2){
+  charTabela3 <- append(x=charTabela3, values=c(NA, NA), after=ii );
+}
+
+#################################################################################
+
+tabela3 <- NULL;
+pontosQuebra <- seq(from=6, to=length(charTabela3), by=15);
+for(ii in pontosQuebra){
+  parcialTabela3 <- matrix(data=charTabela3[ii:(ii+14)], nrow=3, ncol=5, byrow=FALSE);
+  tabela3 <- rbind(tabela3, parcialTabela3);
+}
+tabela3 <- data.frame(tabela3);
+colnames(tabela3) <- charTabela3[1:5];
+
+#################################################################################
+
+tabela3$data_coleta <- dataColeta;
+
+nomeTabela3 <- paste("igpm_historico_ultimos_12_meses_", dataColeta, ".csv", sep="");
+write.csv2(x=tabela3, file=nomeTabela3, row.names=FALSE);
+
+rm( list=c("parcialTabela3", "tabela3", "charTabela3", "idsFim", "idsInicio", "ii", 
+           "nomeTabela3", "pontosInsercao", "pontosInsercao2", "pontosQuebra", 
+           "webTabela3") );
+```
+
+# IPCA
+
+```{r, p04, echo=FALSE, eval=FALSE}
+idsInicio <- which(webPage %in% "<div class=\"card-body full comp-especifico tab-4col\">");
+idsFim <- which(webPage %in% "<div class=\"full marginb20\">");
+
+webTabela4 <- webPage[idsInicio[2]:(idsFim[2]-1)];
+
+charTabela4 <- grep(pattern="<div>", x=webTabela4, value=TRUE);
+
+charTabela4 <- sub(pattern="<div>", replacement="", x=charTabela4);
+charTabela4 <- sub(pattern="</div>", replacement="", x=charTabela4);
+
+charTabela4 <- sub(pattern="<small>", replacement="", x=charTabela4);
+charTabela4 <- sub(pattern=" *</small>", replacement="", x=charTabela4);
+
+charTabela4 <- sub(pattern=".*<strong>", replacement="", x=charTabela4);
+charTabela4 <- sub(pattern=" *</strong>.*", replacement="", x=charTabela4);
+
+charTabela4 <- charTabela4[ which(charTabela4!="") ];
+
+#################################################################################
+
+num_colunas4 <- 4;
+num_linhas4 <- (length(charTabela4)/num_colunas4)-1;
+
+tabela4 <- data.frame( matrix(data=charTabela4[5:length(charTabela4)], 
+                              nrow=num_linhas4, ncol=num_colunas4, byrow=TRUE) );
+colnames(tabela4) <- charTabela4[1:num_colunas4];
+
+#################################################################################
+
+tabela4$data_coleta <- dataColeta;
+
+nomeTabela4 <- paste("ipca_projecoes_mes_", dataColeta, ".csv", sep="");
+write.csv2(x=tabela4, file=nomeTabela4, row.names=FALSE);
+
+rm( list=c("tabela4", "charTabela4", "idsFim", "idsInicio", "nomeTabela4", 
+           "num_colunas4", "num_linhas4", "webTabela4") );
+```
+
+
+```{r, p05, echo=FALSE, eval=FALSE}
+# Essa tabela deu trabalho
+idsInicio <- which(webPage %in% "<div class=\"card-body full comp-especifico\">");
+idsFim <- which(webPage %in% "<div class=\"full\">");
+
+webTabela5 <- webPage[idsInicio[2]:(idsFim[2]-1)];
+
+charTabela5 <- grep(pattern="<div>", x=webTabela5, value=TRUE);
+
+charTabela5 <- sub(pattern="<div>", replacement="", x=charTabela5);
+charTabela5 <- sub(pattern="</div>", replacement="", x=charTabela5);
+
+charTabela5 <- sub(pattern="<small>", replacement="", x=charTabela5);
+charTabela5 <- sub(pattern=" *</small>", replacement="", x=charTabela5);
+
+charTabela5 <- sub(pattern=".*<strong>", replacement="", x=charTabela5);
+charTabela5 <- sub(pattern=" *</strong>.*", replacement="", x=charTabela5);
+
+charTabela5 <- charTabela5[ which(charTabela5!="") ];
+
+#################################################################################
+
+num_colunas5 <- 3;
+num_linhas5 <- (length(charTabela5)/num_colunas5)-1;
+
+tabela5 <- data.frame( matrix(data=charTabela5[4:length(charTabela5)], 
+                              nrow=num_linhas5, ncol=num_colunas5, byrow=TRUE) );
+colnames(tabela5) <- charTabela5[1:num_colunas5];
+
+#################################################################################
+
+charTabela5a <- grep(pattern="<header>", x=webTabela5, value=TRUE);
+
+charTabela5a1 <- sub(pattern="<header>", replacement="", x=charTabela5a);
+charTabela5a1 <- sub(pattern=" *<small.*", replacement="", x=charTabela5a1);
+
+charTabela5a2 <- sub(pattern=".*<strong>", replacement="", x=charTabela5a);
+charTabela5a2 <- sub(pattern="</strong>.*", replacement="", x=charTabela5a2);
+
+tabela5$novo <- charTabela5a2;
+colnames(tabela5)[ncol(tabela5)] <- charTabela5a1;
+
+#################################################################################
+
+tabela5$data_coleta <- dataColeta;
+
+nomeTabela5 <- paste("ipca_projecoes_mes_posterior_", dataColeta, ".csv", sep="");
+write.csv2(x=tabela5, file=nomeTabela5, row.names=FALSE);
+
+rm( list=c("tabela5", "charTabela5", "charTabela5a", "charTabela5a1", "charTabela5a2", 
+           "idsFim", "idsInicio", "nomeTabela5", "num_colunas5", "num_linhas5", 
+           "webTabela5") );
+```
+
+```{r, p06, echo=FALSE, eval=FALSE}
+idsInicio <- which(webPage %in% "<div class=\"card-body full comp-especifico tab-5col\">");
+idsFim <- which(webPage %in% "</main>");
+
+webTabela6 <- webPage[idsInicio[2]:(idsFim-1)];
+
+charTabela6 <- grep(pattern="<div>|(.*?)<br>|(.*?)</div>", x=webTabela6, value=TRUE);
+
+charTabela6 <- sub(pattern="<div>", replacement="", x=charTabela6);
+charTabela6 <- sub(pattern="</div>", replacement="", x=charTabela6);
+
+charTabela6 <- sub(pattern="<small>", replacement="", x=charTabela6);
+charTabela6 <- sub(pattern=" *</small>", replacement="", x=charTabela6);
+
+charTabela6 <- sub(pattern="<strong>", replacement="", x=charTabela6);
+charTabela6 <- sub(pattern=" *</strong>", replacement="", x=charTabela6);
+
+charTabela6 <- sub(pattern="<br>", replacement="", x=charTabela6);
+
+charTabela6 <- charTabela6[ which(charTabela6!="") ];
+
+#################################################################################
+
+pontosInsercao <- seq(from=6, to=length(charTabela6)+9, by=9);
+for(ii in pontosInsercao){
+  charTabela6 <- append(x=charTabela6, values=c(NA), after=ii );
+}
+
+pontosInsercao2 <- seq(from=14, to=(length(charTabela6)+10), by=10);
+for(ii in pontosInsercao2){
+  charTabela6 <- append(x=charTabela6, values=c(NA), after=ii );
+}
+
+#################################################################################
+
+tabela6 <- NULL;
+pontosQuebra <- seq(from=6, to=length(charTabela6), by=10);
+for(ii in pontosQuebra){
+  parcialTabela6 <- matrix(data=charTabela6[ii:(ii+9)], nrow=2, ncol=5, byrow=FALSE);
+  tabela6 <- rbind(tabela6, parcialTabela6);
+}
+tabela6 <- data.frame(tabela6);
+colnames(tabela6) <- charTabela6[1:5];
+
+#################################################################################
+
+tabela6$data_coleta <- dataColeta;
+
+nomeTabela6 <- paste("ipca_historico_ultimos_12_meses_", dataColeta, ".csv", sep="");
+write.csv2(x=tabela6, file=nomeTabela6, row.names=FALSE);
+
+rm( list=c("parcialTabela6", "tabela6", "charTabela6", "idsFim", "idsInicio", "ii", 
+           "nomeTabela6", "pontosInsercao", "pontosInsercao2", "pontosQuebra", 
+           "webTabela6") );
+```
+
+```{r, p07, echo=FALSE, eval=FALSE}
+rm( list=c("dataColeta", "webData", "webPage", "zUrl") );
+```
