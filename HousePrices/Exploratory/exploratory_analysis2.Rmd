@@ -1,0 +1,74 @@
+---
+title: "exploratory_analysis_2"
+author: "Hamaguchi L. e Ossada R."
+date: "`r format(Sys.time(), '%d de %B de %Y')`"
+lang: "pt-br"
+classoption: a4paper
+output: pdf_document
+fig_caption: yes
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, f0, eval=TRUE, echo=FALSE, warning=FALSE}
+#Dê um setwd na pasta HousePrices, onde quer que ela esteja em sua máquina
+
+#Pacotes que serão utilizados
+#ir incluindo em libs novos pacotes
+libs = c('ggplot2','corrplot');
+for(ii in libs){
+  if(!( ii %in% installed.packages())){
+    install.packages(ii);
+  }
+  library(ii, character.only=TRUE );
+}
+
+
+```
+
+
+
+```{r, f1, eval=TRUE, echo=FALSE, warning=FALSE}
+#Importando os dados
+training_data <- read.csv(file="../Data/train.csv", as.is=FALSE);
+remover_colunas <- c("Id"); #Boa Raul!
+training_data <- training_data[ , !(names(training_data) %in% remover_colunas ) ];
+
+# Transformando as variáveis qualitativas que aparecem como um código numérico em fatores
+training_data$MSSubClass <- as.factor(training_data$MSSubClass);
+training_data$OverallQual <- factor(training_data$OverallQual,levels= c(1,2,3,4,5,6,7,8,9,10));
+training_data$OverallCond <- factor(training_data$OverallCond,levels= c(1,2,3,4,5,6,7,8,9,10));
+
+# Tipos das variáves
+vars_tipo <- sapply(X=training_data, FUN=class);
+
+#Matriz de Correlação entre as variáveis
+var_quant <- training_data[quantitativas] #Seleciona as variáveis quantitativas de training_data
+cor_quant <- cor(var_quant) #cria a matriz de correlação
+
+
+```
+
+
+
+# 1 Análise da matriz de correlação das variáveis
+
+Assumimos uma correlação acima de 0,5 como sendo relevante para a análise.
+
+```{r, f2, eval=TRUE, echo=FALSE, warning=FALSE}
+#Criando a tabela de correlações de interesse
+
+cor_quant
+
+
+```
+
+
+
+
+
+
+

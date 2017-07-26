@@ -35,8 +35,6 @@ for(ii in libs){
 ```{r, f1, eval=TRUE, echo=FALSE}
 # Antes de começar dê um setwd na pasta HousePrices 
 # (onde quer que ela esteja no seu pc)
-
-# setwd("Exploratory/");
 ```
 
 ```{r, f2, eval=TRUE, echo=FALSE}
