@@ -88,7 +88,7 @@ for(ii in quantitativas){
 
 \newpage
 
-
+##Matriz de correlação
 ```{r, f5, eval=TRUE, echo=FALSE, warning=FALSE}
 #Matriz de Correlação entre as variáveis
 var_quant <- training_data[quantitativas] #Seleciona as variáveis quantitativas de training_data
