@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 #Dê um setwd na pasta HousePrices, onde quer que ela esteja em sua máquina
 
 #Pacotes que serão utilizados
-#ir incluindo em libs novos pacotes
+#incluir em libs novos pacotes
 libs = c('ggplot2','corrplot');
 for(ii in libs){
   if(!( ii %in% installed.packages())){
@@ -61,7 +61,7 @@ Assumimos uma correlação acima de 0,5 como sendo relevante para a análise.
 ```{r, f2, eval=TRUE, echo=FALSE, warning=FALSE}
 #Criando a tabela de correlações de interesse
 
-matriz_interesse <- cor_quant[cor_quant>0.5]
+matriz_interesse <- cor_quant[cor_quant>0.5] #não funciona
 corrplot(matriz_interesse, method = "circle") #plota a matriz de correlação com círculos
 
 
