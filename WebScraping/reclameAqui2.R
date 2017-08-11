@@ -1,10 +1,13 @@
 library("RSelenium");
 library("XML");
+library("xlsx");
 
-zUrl <- "https://www.reclameaqui.com.br/busca/?q=qualy";
+termo <- "qualy";
+
+zUrl <- paste0("https://www.reclameaqui.com.br/busca/?q=", termo);
 
 # Abre o navegador
-zbrowserDriver <- rsDriver(port=4567L, browser = "firefox");
+zbrowserDriver <- rsDriver(port=4567L, browser="firefox");
 zbrowser <- zbrowserDriver[["client"]];
 zbrowser$navigate(zUrl);
 
@@ -12,6 +15,11 @@ tabela1 <- NULL;
 ################################################################################################
 for(ii in 1:28){
   print( paste("Webscrapping page", ii) );
+  
+  
+  # Pausando a execucao do código, para garantir que a nova página estará carregada
+  Sys.sleep(time=8);
+  
   
   mainPageSource <- zbrowser$getPageSource();
   
@@ -29,39 +37,39 @@ for(ii in 1:28){
   mainPageTopics <- grep(pattern='<h2 class="ng-binding">', x=mainPageSource, value=TRUE);
   
   
-  titulo <- sub(pattern='.*<h2 class="ng-binding">', replacement="", x=mainPageTopics);
-  titulo <- sub(pattern='</h2>.*', replacement="", x=titulo);
+  # titulo <- sub(pattern='.*<h2 class="ng-binding">', replacement="", x=mainPageTopics);
+  # titulo <- sub(pattern='</h2>.*', replacement="", x=titulo);
   
   
-  link <- sub(pattern='.*</span> <a href="', replacement="", x=mainPageTopics);
-  link <- sub(pattern='".*', replacement="", x=link);
-  link <- paste0("https://www.reclameaqui.com.br", link);
+  URL <- sub(pattern='.*</span> <a href="', replacement="", x=mainPageTopics);
+  URL <- sub(pattern='".*', replacement="", x=URL);
+  URL <- paste0("https://www.reclameaqui.com.br", URL);
   
   
-  carinha <- sub(pattern='.*<img src="../../images/icons/', replacement="", x=mainPageTopics);
-  carinha <- sub(pattern='\\..*', replacement="", x=carinha);
+  # carinha <- sub(pattern='.*<img src="../../images/icons/', replacement="", x=mainPageTopics);
+  # carinha <- sub(pattern='\\..*', replacement="", x=carinha);
+  # 
+  # 
+  # empresa <- sub(pattern='.*title="', replacement="", x=mainPageTopics);
+  # empresa <- sub(pattern='">.*', replacement="", x=empresa);
+  # 
+  # 
+  # local <- sub(pattern='.*<img class="pin-maps" src="../../../images/pin-maps.52fa5ca3.png" width="10" height="14"> ', replacement="", x=mainPageTopics);
+  # local <- sub(pattern=' <i.*', replacement="", x=local);
   
   
-  empresa <- sub(pattern='.*title="', replacement="", x=mainPageTopics);
-  empresa <- sub(pattern='">.*', replacement="", x=empresa);
+  DATE <- sub(pattern='.*<i class=\"fa fa-calendar\"></i> ', replacement="", x=mainPageTopics);
+  DATE <- sub(pattern='<br.*', replacement="", x=DATE);
+  DATE <- strptime(x=DATE, format="%d/%m/%y às %Hh%M");
+  DATE <- strftime(x=DATE, format="%d/%m/%Y %H:%M:%S", usetz=FALSE);
+
+  
+  CONTENT <- sub(pattern='.*removeNewLinesDecorator\">', replacement="", x=mainPageTopics);
+  CONTENT <- sub(pattern='</p> </div>', replacement="", x=CONTENT);
+  CONTENT <- gsub(pattern='<b>|</b>', replacement="", x=CONTENT);
   
   
-  local <- sub(pattern='.*<img class="pin-maps" src="../../../images/pin-maps.52fa5ca3.png" width="10" height="14"> ', replacement="", x=mainPageTopics);
-  local <- sub(pattern=' <i.*', replacement="", x=local);
-  
-  
-  data_hora <- sub(pattern='.*<i class=\"fa fa-calendar\"></i> ', replacement="", x=mainPageTopics);
-  data_hora <- sub(pattern='<br.*', replacement="", x=data_hora);
-  data <- sub(pattern=' às.*', replacement="", x=data_hora);
-  hora <- sub(pattern='.*às ', replacement="", x=data_hora);
-  
-  
-  reclamacao_parcial <- sub(pattern='.*removeNewLinesDecorator\">', replacement="", x=mainPageTopics);
-  reclamacao_parcial <- sub(pattern='</p> </div>', replacement="", x=reclamacao_parcial);
-  reclamacao_parcial <- gsub(pattern='<b>|</b>', replacement="", x=reclamacao_parcial);
-  
-  
-  tabela2 <- data.frame( cbind(titulo, link, carinha, empresa, local, data, hora, reclamacao_parcial) );
+  tabela2 <- data.frame( cbind(URL, DATE, CONTENT), stringsAsFactors=FALSE );
   
   tabela1 <- rbind(tabela1, tabela2);
   
@@ -74,8 +82,7 @@ for(ii in 1:28){
   zbuttonNext$highlightElement();
   zbuttonNext$clickElement();
   
-  # Pausando a execucao do código, para garantir que a nova página estará carregada
-  Sys.sleep(time=10);
+
   
   # if( is.null(zbutton1)==FALSE ){
   #   # Vai para a proxima página
@@ -97,12 +104,24 @@ zbrowserDriver$server$process;
 zbrowserDriver$server$stop();
 zbrowserDriver$server$process;
 
-write.csv2(x=tabela1, file="reclame_aqui1.csv");
+nomesColunas <- c("SENTIMENT", "TAG", "TOPICS", "AUDIENCE", "TERM", "AUTHOR_NAME", 
+                  "AUTHOR_GENDER", "AUTHOR_LOCATION*", "AUTHOR_CITY", "AUTHOR_PROVINCE", 
+                  "AUTHOR_COUNTRY", "AUTHOR_SITE", "SERVICE", "REPERCUSSION", "POPULARITY", 
+                  "RELEVANCE", "INFLUENCE");
+tabela1[, nomesColunas] <- NA;
+
+tabela1$SENTIMENT <- "NEGATIVE";
+tabela1$TERM <- toupper(x=termo);
+tabela1$SERVICE <- "FORUNS";
+
+write.xlsx2(x=tabela1, file="RA_QUALY_AGOSTO.xlsx", row.names=FALSE);
+
+
 
 ################################################################################################
 ################################################################################################
 ii <- 2;
-zUrl <- link[ii];
+zUrl <- URL[ii];
 zUrl
 
 zbrowser$navigate(zUrl);
