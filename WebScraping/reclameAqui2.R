@@ -2,18 +2,60 @@ library("RSelenium");
 library("XML");
 library("xlsx");
 
+# Inputs do usuario
+empresa <- "Sadia";
+
 termo <- "qualy";
 
-zUrl <- paste0("https://www.reclameaqui.com.br/busca/?q=", termo);
+usrDataFrom <- "01/07/2017";
+usrDataFrom <- strptime(x=usrDataFrom, format="%d/%m/%Y", tz="GMT");
+# usrDataFrom <- paste(usrDataFrom,"23:59:59", sep=" ");
+# usrDataFrom <- strptime(x=usrDataFrom, format="%d/%m/%Y %H:%M:%S", tz="GMT");
+
+usrDataTo <- "31/07/2017";
+usrDataTo <- strptime(x=usrDataTo, format="%d/%m/%Y", tz="GMT");
+
 
 # Abre o navegador
+zUrl <- "https://www.reclameaqui.com.br/";
 zbrowserDriver <- rsDriver(port=4567L, browser="firefox");
 zbrowser <- zbrowserDriver[["client"]];
 zbrowser$navigate(zUrl);
 
-tabela1 <- NULL;
+
 ################################################################################################
-for(ii in 1:28){
+zSearchField1 <- zbrowser$findElement(using="xpath", value='//*[@id="reputation-input-search"]');
+zSearchField1$highlightElement();
+zSearchField1$clearElement();
+zSearchField1$sendKeysToElement( list(empresa) );
+
+
+zSearchButton1 <- zbrowser$findElement(using="xpath", value='//*[@id="cover"]/div[3]/form/div[1]/div[1]/div/div[2]/button');
+zSearchButton1$highlightElement();
+zSearchButton1$clickElement();
+
+# Pausando a execucao do código, para garantir que a nova página estará carregada
+Sys.sleep(time=8);
+################################################################################################
+zSearchField2 <- zbrowser$findElement(using="xpath", value='//*[@id="search-results"]/div/div[2]/div[1]/div[2]/form/div/input');
+zSearchField2$highlightElement();
+zSearchField2$clearElement();
+zSearchField2$sendKeysToElement( list(termo) );
+
+
+zSearchButton2 <- zbrowser$findElement(using="xpath", value='//*[@id="search-results"]/div/div[2]/div[1]/div[2]/form/div/span/button');
+zSearchButton2$highlightElement();
+zSearchButton2$clickElement();
+
+
+
+################################################################################################
+################################################################################################
+tabela1 <- NULL;
+continuaBusca <- TRUE;
+ii <- 1;
+while(continuaBusca==TRUE){
+  
   print( paste("Webscrapping page", ii) );
   
   
@@ -48,12 +90,12 @@ for(ii in 1:28){
   
   # carinha <- sub(pattern='.*<img src="../../images/icons/', replacement="", x=mainPageTopics);
   # carinha <- sub(pattern='\\..*', replacement="", x=carinha);
-  # 
-  # 
+  
+  
   # empresa <- sub(pattern='.*title="', replacement="", x=mainPageTopics);
   # empresa <- sub(pattern='">.*', replacement="", x=empresa);
-  # 
-  # 
+  
+  
   # local <- sub(pattern='.*<img class="pin-maps" src="../../../images/pin-maps.52fa5ca3.png" width="10" height="14"> ', replacement="", x=mainPageTopics);
   # local <- sub(pattern=' <i.*', replacement="", x=local);
   
@@ -62,7 +104,7 @@ for(ii in 1:28){
   DATE <- sub(pattern='<br.*', replacement="", x=DATE);
   DATE <- strptime(x=DATE, format="%d/%m/%y às %Hh%M");
   DATE <- strftime(x=DATE, format="%d/%m/%Y %H:%M:%S", usetz=FALSE);
-
+  
   
   CONTENT <- sub(pattern='.*removeNewLinesDecorator\">', replacement="", x=mainPageTopics);
   CONTENT <- sub(pattern='</p> </div>', replacement="", x=CONTENT);
@@ -76,23 +118,23 @@ for(ii in 1:28){
   # Zera o source
   mainPageSource <- NULL;
   
-  # Vai para a proxima página
-  zbuttonNext <- NULL;
-  zbuttonNext <- zbrowser$findElement(using="css selector", '.pagination-next > a:nth-child(1)');
-  zbuttonNext$highlightElement();
-  zbuttonNext$clickElement();
   
-
+  ultimaData <- tabela2$DATE[ nrow(tabela2) ];
+  ultimaData <- strptime(x=ultimaData, format="%d/%m/%Y %H:%M:%S", tz="GMT");
   
-  # if( is.null(zbutton1)==FALSE ){
-  #   # Vai para a proxima página
-  #   zbutton2 <- zbrowser$findElement(using="xpath", '//*[@id="search-results"]/div/div[2]/div[1]/div[3]/div/ul[2]/li[9]/a');
-  #   zbutton2$highlightElement();
-  #   zbutton2$clickElement();
-  #   
-  # }else{
-  #   # Para de buscar
-  # }
+  # Se a última data da tabela2 for após ou igual à data que o usuário quer
+  # Continua a busca na próxima página
+  # Pois a próxima página pode ter entradas iguais à data desejada pelo usuário
+  if(ultimaData>=usrDataTo){
+    # Vai para a proxima página
+    zbuttonNext <- NULL;
+    zbuttonNext <- zbrowser$findElement(using="css selector", '.pagination-next > a:nth-child(1)');
+    zbuttonNext$highlightElement();
+    zbuttonNext$clickElement();
+    ii <- ii+1;
+  }else{
+    continuaBusca <- FALSE;
+  }
 }
 print( "Finished Webscrapping" );
 
@@ -104,19 +146,30 @@ zbrowserDriver$server$process;
 zbrowserDriver$server$stop();
 zbrowserDriver$server$process;
 
+tabela3 <- tabela1[ which( strptime(x=tabela1$DATE, format="%d/%m/%Y %H:%M:%S", tz="GMT") >= usrDataFrom ), ];
+tabela3 <- tabela3[ which( strptime(x=tabela3$DATE, format="%d/%m/%Y %H:%M:%S", tz="GMT") <= usrDataTo ), ];
+
 nomesColunas <- c("SENTIMENT", "TAG", "TOPICS", "AUDIENCE", "TERM", "AUTHOR_NAME", 
                   "AUTHOR_GENDER", "AUTHOR_LOCATION*", "AUTHOR_CITY", "AUTHOR_PROVINCE", 
                   "AUTHOR_COUNTRY", "AUTHOR_SITE", "SERVICE", "REPERCUSSION", "POPULARITY", 
                   "RELEVANCE", "INFLUENCE");
-tabela1[, nomesColunas] <- NA;
+tabela3[, nomesColunas] <- NA;
 
-tabela1$SENTIMENT <- "NEGATIVE";
-tabela1$TERM <- toupper(x=termo);
-tabela1$SERVICE <- "FORUNS";
+termoMaiuscula <- toupper(x=termo);
+tabela3$SENTIMENT <- "NEGATIVE";
+tabela3$TERM <- termoMaiuscula;
+tabela3$SERVICE <- "FORUNS";
 
-write.xlsx2(x=tabela1, file="RA_QUALY_AGOSTO.xlsx", row.names=FALSE);
+# usrMonth <- toupper( strftime(x=usrDataTo, format="%B") );
+# nomeArquivo <- paste0("RA_", termoMaiuscula, "_", usrMonth, ".xlsx");
+# write.xlsx2(x=tabela3, file=nomeArquivo, row.names=FALSE);
 
 
+
+nomeArquivo2 <- paste0("RA_", termoMaiuscula, "_", 
+                       strftime(x=usrDataTo, format="%Y_%m_%d"), "_a_", 
+                       strftime(x=usrDataFrom, format="%Y_%m_%d"), ".xlsx");
+write.xlsx2(x=tabela3, file=nomeArquivo2, row.names=FALSE);
 
 ################################################################################################
 ################################################################################################
