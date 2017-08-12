@@ -175,17 +175,20 @@ tabela3$SERVICE <- "FORUNS";
 
 
 
-nomeArquivo2 <- paste0("RA_", termoMaiuscula, "_", 
-                       strftime(x=usrDataFrom, format="%Y_%m_%d"), "_a_", 
-                       strftime(x=usrDataTo, format="%Y_%m_%d"), ".xlsx");
-write.xlsx2(x=tabela3, file=nomeArquivo2, row.names=FALSE);
+# nomeArquivo2 <- paste0("RA_", termoMaiuscula, "_", 
+#                        strftime(x=usrDataFrom, format="%Y_%m_%d"), "_a_", 
+#                        strftime(x=usrDataTo, format="%Y_%m_%d"), ".xlsx");
+# write.xlsx2(x=tabela3, file=nomeArquivo2, row.names=FALSE);
+
+
 
 tabela4 <- tabela3;
 tabela4$CONTENT <- iconv(x=tabela4$CONTENT, from="UTF-8", to="ISO-8859-2");
+tabela4$DATE <- as.character(tabela4$DATE);
 nomeArquivo3 <- paste0("RA_", termoMaiuscula, "_", 
                        strftime(x=usrDataFrom, format="%Y_%m_%d"), "_a_", 
                        strftime(x=usrDataTo, format="%Y_%m_%d"), ".csv");
-write.csv2(x=tabela4, file=nomeArquivo3, row.names=FALSE);
+write.csv2(x=tabela4, file=nomeArquivo3, row.names=FALSE, na="");
 ################################################################################################
 ################################################################################################
 ii <- 2;
