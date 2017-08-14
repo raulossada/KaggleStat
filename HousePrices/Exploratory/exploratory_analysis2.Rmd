@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #Pacotes que serão utilizados
 #incluir em libs novos pacotes
-libs = c('ggplot2','corrplot');
+libs = c('ggplot2','corrplot','knitr');
 for(ii in libs){
   if(!( ii %in% installed.packages())){
     install.packages(ii);
@@ -56,18 +56,35 @@ cor_quant <- cor(var_quant) #cria a matriz de correlação
 
 # 1 Análise da matriz de correlação das variáveis
 
-Assumimos uma correlação acima de 0,5 como sendo relevante para a análise.
+Assumimos uma correlação acima de 0,65, em módulo como sendo relevante para a análise.
 
 ```{r, f2, eval=TRUE, echo=FALSE, warning=FALSE}
 #Criando a tabela de correlações de interesse
 
-matriz_interesse <- cor_quant[cor_quant>0.5] #não funciona
-corrplot(matriz_interesse, method = "circle") #plota a matriz de correlação com círculos
+flattenCorMatriz <- function(cormat){
+  ut <- upper.tri(cormat)
+  answer <- data.frame(
+    row=rownames(cormat)[row(cormat)[ut]],
+    column=rownames(cormat)[col(cormat)[ut]],
+    cor=(cormat)[ut]
+  )
+  return(answer)
+  
+}
+
+corrplot(cor_quant, method = "circle") #plota a matriz de correlação com círculos
+
+
+flat_cor_quant <- flattenCorMatriz(cor_quant)
+interest_matrix <- subset(flat_cor_quant,cor>0.65)
+
+kable(interest_matrix,row.names=F)
+
+
+
 
 
 ```
-
-
 
 
 
