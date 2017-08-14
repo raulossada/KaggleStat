@@ -8,19 +8,19 @@ empresa <- "Sadia";
 termo <- "qualy";
 
 usrDataFrom <- "12/03/2017";
+usrDataFrom <- paste(usrDataFrom,"00:00:00", sep=" ");
 usrDataFrom <- strptime(x=usrDataFrom, format="%d/%m/%Y", tz="GMT");
 
 
 usrDataTo <- "13/08/2017";
-# usrDataTo <- strptime(x=usrDataTo, format="%d/%m/%Y", tz="GMT");
 usrDataTo <- paste(usrDataTo,"23:59:59", sep=" ");
 usrDataTo <- strptime(x=usrDataTo, format="%d/%m/%Y %H:%M:%S", tz="GMT");
 
 
 # Abre o navegador
 zUrl <- "https://www.reclameaqui.com.br/";
-# zbrowserDriver <- rsDriver(port=4567L, browser="firefox");
-zbrowserDriver <- rsDriver(port=4567L);
+zbrowserDriver <- rsDriver(port=4567L, browser="firefox");
+# zbrowserDriver <- rsDriver(port=4567L);
 zbrowser <- zbrowserDriver[["client"]];
 zbrowser$navigate(zUrl);
 
@@ -85,9 +85,7 @@ while(continuaBusca==TRUE){
   # titulo <- sub(pattern='</h2>.*', replacement="", x=titulo);
   
   
-  # URL <- sub(pattern='.*</span> <a href="', replacement="", x=mainPageTopics);
-  # URL <- sub(pattern='".*', replacement="", x=URL);
-  URL <- sub(pattern='\"> <h2 class=.*', replacement="", x=mainPageTopics);
+  URL <- sub(pattern='\" ui-sref=\".*', replacement="", x=mainPageTopics);
   URL <- sub(pattern='.*href=\"', replacement="", x=URL);
   URL <- paste0("https://www.reclameaqui.com.br", URL);
   
@@ -157,6 +155,8 @@ tabela1$DATE <- strptime(x=tabela1$DATE, format="%d/%m/%Y %H:%M:%S", tz="GMT");
 
 tabela3 <- tabela1[ which(tabela1$DATE >= usrDataFrom), ];
 tabela3 <- tabela3[ which(tabela3$DATE <= usrDataTo), ];
+tabela3$DATE <- as.character(tabela3$DATE);
+
 
 nomesColunas <- c("SENTIMENT", "TAG", "TOPICS", "AUDIENCE", "TERM", "AUTHOR_NAME", 
                   "AUTHOR_GENDER", "AUTHOR_LOCATION*", "AUTHOR_CITY", "AUTHOR_PROVINCE", 
@@ -169,26 +169,21 @@ tabela3$SENTIMENT <- "NEGATIVE";
 tabela3$TERM <- termoMaiuscula;
 tabela3$SERVICE <- "FORUNS";
 
-# usrMonth <- toupper( strftime(x=usrDataFrom, format="%B") );
-# nomeArquivo <- paste0("RA_", termoMaiuscula, "_", usrMonth, ".xlsx");
-# write.xlsx2(x=tabela3, file=nomeArquivo, row.names=FALSE);
+
+nomeArquivo2 <- paste0("RA_", termoMaiuscula, "_",
+                       strftime(x=usrDataFrom, format="%Y_%m_%d"), "_a_",
+                       strftime(x=usrDataTo, format="%Y_%m_%d"), ".xlsx");
+write.xlsx2(x=tabela3, file=nomeArquivo2, row.names=FALSE);
 
 
 
-# nomeArquivo2 <- paste0("RA_", termoMaiuscula, "_", 
+# tabela4 <- tabela3;
+# tabela4$CONTENT <- iconv(x=tabela4$CONTENT, from="UTF-8", to="ISO-8859-2");
+# tabela4$DATE <- as.character(tabela4$DATE);
+# nomeArquivo3 <- paste0("RA_", termoMaiuscula, "_", 
 #                        strftime(x=usrDataFrom, format="%Y_%m_%d"), "_a_", 
-#                        strftime(x=usrDataTo, format="%Y_%m_%d"), ".xlsx");
-# write.xlsx2(x=tabela3, file=nomeArquivo2, row.names=FALSE);
-
-
-
-tabela4 <- tabela3;
-tabela4$CONTENT <- iconv(x=tabela4$CONTENT, from="UTF-8", to="ISO-8859-2");
-tabela4$DATE <- as.character(tabela4$DATE);
-nomeArquivo3 <- paste0("RA_", termoMaiuscula, "_", 
-                       strftime(x=usrDataFrom, format="%Y_%m_%d"), "_a_", 
-                       strftime(x=usrDataTo, format="%Y_%m_%d"), ".csv");
-write.csv2(x=tabela4, file=nomeArquivo3, row.names=FALSE, na="");
+#                        strftime(x=usrDataTo, format="%Y_%m_%d"), ".csv");
+# write.csv2(x=tabela4, file=nomeArquivo3, row.names=FALSE, na="");
 ################################################################################################
 ################################################################################################
 ii <- 2;
