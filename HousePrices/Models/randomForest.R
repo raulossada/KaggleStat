@@ -1,5 +1,10 @@
 #Testes de modelos
 
+
+#Primeiro desafio: Escolher as váriaveis explicativas para usar
+#Espaço para a escolha kk
+
+
 #Random Forest
 install.packages('randomForest')
 library(randomForest)
