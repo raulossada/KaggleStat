@@ -46,7 +46,8 @@ training_data$OverallCond <- factor(training_data$OverallCond,levels= c(1,2,3,4,
 vars_tipo <- sapply(X=training_data, FUN=class);
 
 #Matriz de Correlação entre as variáveis
-var_quant <- training_data[quantitativas] #Seleciona as variáveis quantitativas de training_data
+quantitativas <- vars_tipo[which(vars_tipo != "factor")]
+var_quant <- training_data[,names(training_data) %in% names(quantitativas) ] #Seleciona as variáveis quantitativas de training_data
 cor_quant <- cor(var_quant) #cria a matriz de correlação
 
 
@@ -76,15 +77,25 @@ corrplot(cor_quant, method = "circle") #plota a matriz de correlação com círc
 
 
 flat_cor_quant <- flattenCorMatriz(cor_quant)
-interest_matrix <- subset(flat_cor_quant,cor>0.65)
-
-kable(interest_matrix,row.names=F)
+interest_matrix_positive <- subset(flat_cor_quant,cor>0.65)
+colnames(interest_matrix_positive) = c("Variavel 1","Variavel 2","Correlacao")
+kable(interest_matrix_positive,row.names=F)
 
 
 
 
 
 ```
+
+Avaliamos também as correlações negativas presentes na matriz, apenas 3 são menores que 0,38, como mostrado abaixo.
+
+```{r, f3, eval=TRUE, echo=FALSE, warning=FALSE}
+interest_matrix_negative <- subset(flat_cor_quant,cor< -0.38)
+colnames(interest_matrix_negative) = c("Variavel 1","Variavel 2","Correlacao")
+kable(interest_matrix_negative,row.names=F)
+
+```
+
 
 
 
