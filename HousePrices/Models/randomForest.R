@@ -21,6 +21,8 @@ for(ii in libs){
   library(ii, character.only=TRUE );
 }
 
+#Estudar as assunções para usar o Random Forest
+#Somente com variaveis continuas? O que fazer com os NAs? Como selecionar variaveis?
 dataframe_of_independent_variables = training_data[ , !(names(training_data) %in% c('SalePrice')) ]
 vector_of_dependent_variable  = training_data[ , names(training_data) == 'SalePrice']
 number_of_trees = 500
